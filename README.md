@@ -4,7 +4,7 @@
 
 <hr>
 
-Vyzorix is an AI-powered software development platform. It provides agents that can perform development tasks by interacting with tools, browsing the web, and modifying code.
+Vyzorix is a AI-powered software development platform. It provides agents that can perform development tasks by interacting with tools, browsing the web, and modifying code.
 
 There are a few ways to work with Vyzorix:
 
