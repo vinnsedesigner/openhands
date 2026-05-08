@@ -4,7 +4,7 @@ Provides essential services for authentication, security, and system operations.
 
 ## Overview
 
-This module contains core services that support the OpenHands app server infrastructure, including authentication, token management, and security operations.
+This module contains core services that support the Vyzorix app server infrastructure, including authentication, token management, and security operations.
 
 ## Key Components
 

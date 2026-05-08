@@ -1,10 +1,10 @@
-# OpenHands App Server
+# Vyzorix App Server
 
-FastAPI-based application server that provides REST API endpoints for OpenHands V1 integration.
+FastAPI-based application server that provides REST API endpoints for Vyzorix V1 integration.
 
 ## Overview
 
-This package provides server and sandbox functionality to interact with the OpenHands Software Agent SDK. It exposes REST API endpoints for managing conversations, sandboxes, events, and user settings.
+This package provides server and sandbox functionality to interact with the Vyzorix Software Agent SDK. It exposes REST API endpoints for managing conversations, sandboxes, events, and user settings.
 
 ## Architecture
 

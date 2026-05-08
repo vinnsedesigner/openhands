@@ -1,10 +1,10 @@
 # Development Guide
 
-This guide is for people working on OpenHands and editing the source code.
+This guide is for people working on Vyzorix and editing the source code.
 If you wish to contribute your changes, check out the
 [CONTRIBUTING.md](https://github.com/OpenHands/OpenHands/blob/main/CONTRIBUTING.md)
 on how to clone and setup the project initially before moving on. Otherwise,
-you can clone the OpenHands project directly.
+you can clone the Vyzorix project directly.
 
 ## Choose Your Setup
 
@@ -39,9 +39,9 @@ make build
 
 ### 3. Configure the Language Model
 
-OpenHands supports a diverse array of Language Models (LMs) through the powerful [litellm](https://docs.litellm.ai) library.
+Vyzorix supports a diverse array of Language Models (LMs) through the powerful [litellm](https://docs.litellm.ai) library.
 
-For the V1 web app, start OpenHands and configure your model and API key in the Settings UI.
+For the V1 web app, start Vyzorix and configure your model and API key in the Settings UI.
 
 If you are running headless or CLI workflows, you can prepare local defaults with:
 
@@ -63,7 +63,7 @@ make start-backend  # Backend only on port 3000
 make start-frontend # Frontend only on port 3001
 ```
 
-These targets serve the current OpenHands V1 API by default. In the codebase, `make start-backend` runs `openhands.server.listen:app`, and that app includes the `openhands/app_server` V1 routes unless `ENABLE_V1=0`.
+These targets serve the current Vyzorix V1 API by default. In the codebase, `make start-backend` runs `openhands.server.listen:app`, and that app includes the `openhands/app_server` V1 routes unless `ENABLE_V1=0`.
 
 ---
 
@@ -222,7 +222,7 @@ For more details, see the [dev container documentation](./containers/dev/README.
 
 ### Alternative: Docker Run
 
-If you just want to run OpenHands without setting up a dev environment:
+If you just want to run Vyzorix without setting up a dev environment:
 
 ```bash
 make docker-run
@@ -255,9 +255,9 @@ mamba install conda-forge::poetry
 
 ---
 
-## Running OpenHands with OpenHands
+## Running Vyzorix with Vyzorix
 
-You can use OpenHands to develop and improve OpenHands itself!
+You can use Vyzorix to develop and improve Vyzorix itself!
 
 ### Quick Start
 
@@ -320,12 +320,12 @@ make help
 ## Key Documentation Resources
 
 - [/README.md](./README.md): Main project overview, features, and basic setup instructions
-- [/Development.md](./Development.md) (this file): Comprehensive guide for developers working on OpenHands
+- [/Development.md](./Development.md) (this file): Comprehensive guide for developers working on Vyzorix
 - [/CONTRIBUTING.md](./CONTRIBUTING.md): Guidelines for contributing to the project, including code style and PR process
 - [DOC_STYLE_GUIDE.md](https://github.com/OpenHands/docs/blob/main/openhands/DOC_STYLE_GUIDE.md): Standards for writing and maintaining project documentation
 - [/openhands/app_server/README.md](./openhands/app_server/README.md): Current V1 application server implementation and REST API modules
 - [/frontend/README.md](./frontend/README.md): Frontend React application setup and development guide
 - [/containers/README.md](./containers/README.md): Information about Docker containers and deployment
 - [/tests/unit/README.md](./tests/unit/README.md): Guide to writing and running unit tests
-- [OpenHands/benchmarks](https://github.com/OpenHands/benchmarks): Documentation for the evaluation framework and benchmarks
+- [Vyzorix/benchmarks](https://github.com/OpenHands/benchmarks): Documentation for the evaluation framework and benchmarks
 - [/skills/README.md](./skills/README.md): Information about the skills architecture and implementation

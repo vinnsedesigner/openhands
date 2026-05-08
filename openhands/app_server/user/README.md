@@ -1,6 +1,6 @@
 # User Management
 
-Handles user authentication, authorization, and profile management for the OpenHands app server.
+Handles user authentication, authorization, and profile management for the Vyzorix app server.
 
 ## Overview
 

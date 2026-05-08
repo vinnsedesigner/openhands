@@ -1,6 +1,6 @@
 # Sandbox Management
 
-Manages sandbox environments for secure agent execution within OpenHands.
+Manages sandbox environments for secure agent execution within Vyzorix.
 
 ## Overview
 

@@ -1,6 +1,6 @@
 # Authentication Flow (SaaS Deployment)
 
-OpenHands uses Keycloak for identity management in the SaaS deployment. The authentication flow involves multiple services:
+Vyzorix uses Keycloak for identity management in the SaaS deployment. The authentication flow involves multiple services:
 
 ```mermaid
 sequenceDiagram
@@ -13,7 +13,7 @@ sequenceDiagram
 
     Note over User,DB: OAuth 2.0 / OIDC Authentication Flow
 
-    User->>App: Access OpenHands
+    User->>App: Access Vyzorix
     App->>User: Redirect to Keycloak
     User->>KC: Login request
     KC->>User: Show login options

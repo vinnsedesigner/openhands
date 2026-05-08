@@ -1,6 +1,6 @@
 # Plugin Launch Flow
 
-This document traces the complete data flow for launching plugins in OpenHands, from the source marketplace through to agent execution. Each section shows the exact endpoints, payloads, and transformations.
+This document traces the complete data flow for launching plugins in Vyzorix, from the source marketplace through to agent execution. Each section shows the exact endpoints, payloads, and transformations.
 
 ## Architecture Overview
 
@@ -30,13 +30,13 @@ The marketplace is a GitHub repository containing a `marketplace.json` that inde
 
 ```json
 {
-  "name": "OpenHands Plugin Marketplace",
+  "name": "Vyzorix Plugin Marketplace",
   "owner": {
-    "name": "OpenHands",
+    "name": "Vyzorix",
     "email": "team@all-hands.dev"
   },
   "metadata": {
-    "description": "Official OpenHands plugin marketplace",
+    "description": "Official Vyzorix plugin marketplace",
     "pluginRoot": "plugins"
   },
   "plugins": [
@@ -219,7 +219,7 @@ And `message` (URL-decoded) is:
 
 ---
 
-## Step 4: OpenHands Frontend (`/launch` Route)
+## Step 4: Vyzorix Frontend (`/launch` Route)
 
 **Route**: `/launch?plugins=BASE64&message=/city-weather:now`
 
@@ -300,7 +300,7 @@ Authorization: Bearer <user_token>
 
 ---
 
-## Step 5: OpenHands App Server
+## Step 5: Vyzorix App Server
 
 **Endpoint**: `POST /api/v1/app-conversations`
 
@@ -524,7 +524,7 @@ When the agent processes the message:
 | 1 | Marketplace | - | `marketplace.json` + `plugin.json` files |
 | 2 | Plugin Directory Server | Marketplace files | REST API responses with `entry_command`, `parameters` |
 | 3 | Plugin Directory Client | Plugin + Config | Launch URL: `plugins` (with defaults) + `message` (slash command only) |
-| 4 | OpenHands Frontend | URL query params | API call: `plugins` (with user values) + `message` (unchanged slash command) |
+| 4 | Vyzorix Frontend | URL query params | API call: `plugins` (with user values) + `message` (unchanged slash command) |
 | 5 | App Server | API request | `StartConversationRequest`: `PluginSource` (no params) + message (params in text) |
 | 6 | Agent Server | `StartConversationRequest` | `LocalConversation` with deferred plugins |
 | 7 | SDK | `PluginSource` list | Loaded `Plugin` objects with skills/hooks/MCP |
@@ -534,7 +534,7 @@ When the agent processes the message:
 
 ```
 ┌─────────────────────┐     ┌─────────────────────┐     ┌─────────────────────┐
-│  Plugin Directory   │     │  OpenHands Frontend │     │    App Server       │
+│  Plugin Directory   │     │  Vyzorix Frontend │     │    App Server       │
 │                     │     │                     │     │                     │
 │  plugins[].params   │────▶│  plugins[].params   │────▶│  Appends params to  │
 │  = defaults         │     │  = user values      │     │  message as text    │
@@ -590,8 +590,8 @@ The SDK's `PluginSource` class intentionally does NOT have a `parameters` field.
 
 ## Related PRs
 
-- [OpenHands PR #12338](https://github.com/OpenHands/OpenHands/pull/12338) - App server plugin support
-- [OpenHands PR #12699](https://github.com/OpenHands/OpenHands/pull/12699) - Frontend `/launch` route
+- [Vyzorix PR #12338](https://github.com/OpenHands/OpenHands/pull/12338) - App server plugin support
+- [Vyzorix PR #12699](https://github.com/OpenHands/OpenHands/pull/12699) - Frontend `/launch` route
 - [SDK PR #1651](https://github.com/OpenHands/software-agent-sdk/pull/1651) - Agent server plugin loading
 - [SDK PR #1647](https://github.com/OpenHands/software-agent-sdk/pull/1647) - Plugin.fetch() for remote plugin fetching
 - [SDK PR #2230](https://github.com/OpenHands/software-agent-sdk/pull/2230) - entry_command field definition

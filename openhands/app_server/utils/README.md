@@ -1,10 +1,10 @@
-# OpenHands Utilities
+# Vyzorix Utilities
 
-Common utility functions and helpers for OpenHands app server.
+Common utility functions and helpers for Vyzorix app server.
 
 ## Overview
 
-This module provides utility functions that are used across OpenHands for common operations like date handling, SQL operations, dynamic imports, async utilities, LLM integration, and more.
+This module provides utility functions that are used across Vyzorix for common operations like date handling, SQL operations, dynamic imports, async utilities, LLM integration, and more.
 
 ## Key Components
 
@@ -25,27 +25,27 @@ This module provides utility functions that are used across OpenHands for common
 
 ## Runtime Implementation Substitution
 
-OpenHands provides an extensibility mechanism through the `get_impl` and `import_from` functions in `import_utils.py`. This mechanism allows applications built on OpenHands to customize behavior by providing their own implementations of OpenHands base classes.
+Vyzorix provides an extensibility mechanism through the `get_impl` and `import_from` functions in `import_utils.py`. This mechanism allows applications built on Vyzorix to customize behavior by providing their own implementations of Vyzorix base classes.
 
 ### How It Works
 
 1. Base classes define interfaces through abstract methods and properties
-2. Default implementations are provided by OpenHands
+2. Default implementations are provided by Vyzorix
 3. Applications can provide custom implementations by:
    - Creating a class that inherits from the base class
    - Implementing all required methods
-   - Configuring OpenHands to use the custom implementation via configuration
+   - Configuring Vyzorix to use the custom implementation via configuration
 
 ### Example
 
 ```python
-# In OpenHands base code:
+# In Vyzorix base code:
 class ConversationManager:
     @abstractmethod
     async def attach_to_conversation(self, sid: str) -> Conversation:
         """Attach to an existing conversation."""
 
-# Default implementation in OpenHands:
+# Default implementation in Vyzorix:
 class StandaloneConversationManager(ConversationManager):
     async def attach_to_conversation(self, sid: str) -> Conversation:
         # Single-server implementation
@@ -63,7 +63,7 @@ server_config.conversation_manager_class = 'myapp.ClusteredConversationManager'
 
 ### Common Extension Points
 
-OpenHands provides several components that can be extended:
+Vyzorix provides several components that can be extended:
 
 1. Server Components:
    - `ConversationManager`: Manages conversation lifecycles

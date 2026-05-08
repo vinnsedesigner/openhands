@@ -1,10 +1,10 @@
 # Contributing
 
-Thanks for your interest in contributing to OpenHands! We're building the future of AI-powered software development, and we'd love for you to be part of this journey.
+Thanks for your interest in contributing to Vyzorix! We're building the future of AI-powered software development, and we'd love for you to be part of this journey.
 
 ## Our Vision
 
-The OpenHands community is built around the belief that AI and AI agents are going to fundamentally change the way we build software. If this is true, we should do everything we can to make sure that the benefits provided by such powerful technology are accessible to everyone.
+The Vyzorix community is built around the belief that AI and AI agents are going to fundamentally change the way we build software. If this is true, we should do everything we can to make sure that the benefits provided by such powerful technology are accessible to everyone.
 
 We believe in the power of open source to democratize access to cutting-edge AI technology. Just as the internet transformed how we share information, we envision a world where AI-powered development tools are available to every developer, regardless of their background or resources.
 
@@ -12,10 +12,10 @@ We believe in the power of open source to democratize access to cutting-edge AI 
 
 ### Quick Ways to Contribute
 
-- **Use OpenHands** and [report issues](https://github.com/OpenHands/OpenHands/issues) you encounter
+- **Use Vyzorix** and [report issues](https://github.com/OpenHands/OpenHands/issues) you encounter
 - **Give feedback** using the thumbs-up/thumbs-down buttons after each session
 - **Star our repository** on [GitHub](https://github.com/OpenHands/OpenHands)
-- **Share OpenHands** with other developers
+- **Share Vyzorix** with other developers
 
 ### Set Up Your Development Environment
 
@@ -88,7 +88,7 @@ These are evaluated based on:
 
 Discuss major changes in [GitHub issues](https://github.com/OpenHands/OpenHands/issues) or [Slack](https://openhands.dev/joinslack) first.
 
-## Sending Pull Requests to OpenHands
+## Sending Pull Requests to Vyzorix
 
 You'll need to fork our repository to send us a Pull Request. You can learn more
 about how to fork a GitHub repo and open a PR with your changes in [this article](https://medium.com/swlh/forks-and-pull-requests-how-to-contribute-to-github-repos-8843fac34ce8).

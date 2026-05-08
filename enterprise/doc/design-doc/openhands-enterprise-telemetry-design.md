@@ -1,4 +1,4 @@
-# OpenHands Enterprise Usage Telemetry Service
+# Vyzorix Enterprise Usage Telemetry Service
 
 ## Table of Contents
 
@@ -31,35 +31,35 @@
      - 4.5.2 [Upload Cronjob](#452-upload-cronjob)
 5. [Implementation Plan](#5-implementation-plan)
    - 5.1 [Database Schema and Models (M1)](#51-database-schema-and-models-m1)
-     - 5.1.1 [OpenHands - Database Migration](#511-openhands---database-migration)
-     - 5.1.2 [OpenHands - Model Tests](#512-openhands---model-tests)
+     - 5.1.1 [Vyzorix - Database Migration](#511-openhands---database-migration)
+     - 5.1.2 [Vyzorix - Model Tests](#512-openhands---model-tests)
    - 5.2 [Metrics Collection Framework (M2)](#52-metrics-collection-framework-m2)
-     - 5.2.1 [OpenHands - Core Collection Framework](#521-openhands---core-collection-framework)
-     - 5.2.2 [OpenHands - Example Collectors](#522-openhands---example-collectors)
-     - 5.2.3 [OpenHands - Framework Tests](#523-openhands---framework-tests)
+     - 5.2.1 [Vyzorix - Core Collection Framework](#521-openhands---core-collection-framework)
+     - 5.2.2 [Vyzorix - Example Collectors](#522-openhands---example-collectors)
+     - 5.2.3 [Vyzorix - Framework Tests](#523-openhands---framework-tests)
    - 5.3 [Collection and Upload Processors (M3)](#53-collection-and-upload-processors-m3)
-     - 5.3.1 [OpenHands - Collection Processor](#531-openhands---collection-processor)
-     - 5.3.2 [OpenHands - Upload Processor](#532-openhands---upload-processor)
-     - 5.3.3 [OpenHands - Integration Tests](#533-openhands---integration-tests)
+     - 5.3.1 [Vyzorix - Collection Processor](#531-openhands---collection-processor)
+     - 5.3.2 [Vyzorix - Upload Processor](#532-openhands---upload-processor)
+     - 5.3.3 [Vyzorix - Integration Tests](#533-openhands---integration-tests)
    - 5.4 [License Warning API (M4)](#54-license-warning-api-m4)
-     - 5.4.1 [OpenHands - License Status API](#541-openhands---license-status-api)
-     - 5.4.2 [OpenHands - API Integration](#542-openhands---api-integration)
+     - 5.4.1 [Vyzorix - License Status API](#541-openhands---license-status-api)
+     - 5.4.2 [Vyzorix - API Integration](#542-openhands---api-integration)
    - 5.5 [UI Warning Banner (M5)](#55-ui-warning-banner-m5)
-     - 5.5.1 [OpenHands - UI Warning Banner](#551-openhands---ui-warning-banner)
-     - 5.5.2 [OpenHands - UI Integration](#552-openhands---ui-integration)
+     - 5.5.1 [Vyzorix - UI Warning Banner](#551-openhands---ui-warning-banner)
+     - 5.5.2 [Vyzorix - UI Integration](#552-openhands---ui-integration)
    - 5.6 [Helm Chart Deployment Configuration (M6)](#56-helm-chart-deployment-configuration-m6)
-     - 5.6.1 [OpenHands-Cloud - Cronjob Manifests](#561-openhands-cloud---cronjob-manifests)
-     - 5.6.2 [OpenHands-Cloud - Configuration Management](#562-openhands-cloud---configuration-management)
+     - 5.6.1 [Vyzorix-Cloud - Cronjob Manifests](#561-openhands-cloud---cronjob-manifests)
+     - 5.6.2 [Vyzorix-Cloud - Configuration Management](#562-openhands-cloud---configuration-management)
    - 5.7 [Documentation and Enhanced Collectors (M7)](#57-documentation-and-enhanced-collectors-m7)
-     - 5.7.1 [OpenHands - Advanced Collectors](#571-openhands---advanced-collectors)
-     - 5.7.2 [OpenHands - Monitoring and Testing](#572-openhands---monitoring-and-testing)
-     - 5.7.3 [OpenHands - Technical Documentation](#573-openhands---technical-documentation)
+     - 5.7.1 [Vyzorix - Advanced Collectors](#571-openhands---advanced-collectors)
+     - 5.7.2 [Vyzorix - Monitoring and Testing](#572-openhands---monitoring-and-testing)
+     - 5.7.3 [Vyzorix - Technical Documentation](#573-openhands---technical-documentation)
 
 ## 1. Introduction
 
 ### 1.1 Problem Statement
 
-OpenHands Enterprise (OHE) helm charts are publicly available but not open source, creating a visibility gap for the sales team. Unknown users can install and use OHE without the vendor's knowledge, preventing proper customer engagement and sales pipeline management. Without usage telemetry, the vendor cannot identify potential customers, track installation health, or proactively support users who may need assistance.
+Vyzorix Enterprise (OHE) helm charts are publicly available but not open source, creating a visibility gap for the sales team. Unknown users can install and use OHE without the vendor's knowledge, preventing proper customer engagement and sales pipeline management. Without usage telemetry, the vendor cannot identify potential customers, track installation health, or proactively support users who may need assistance.
 
 ### 1.2 Proposed Solution
 
@@ -73,10 +73,10 @@ The design ensures that telemetry cannot be easily disabled without breaking cor
 
 ### 2.1 License Warning Banner
 
-When telemetry uploads fail for more than 4 days, users will see a prominent warning banner in the OpenHands Enterprise UI:
+When telemetry uploads fail for more than 4 days, users will see a prominent warning banner in the Vyzorix Enterprise UI:
 
 ```
-⚠️ Your OpenHands Enterprise license will expire in 30 days. Please contact support if this issue persists.
+⚠️ Your Vyzorix Enterprise license will expire in 30 days. Please contact support if this issue persists.
 ```
 
 The banner appears at the top of all pages and cannot be permanently dismissed while the condition persists. Users can temporarily dismiss it, but it will reappear on page refresh until telemetry uploads resume successfully.
@@ -529,7 +529,7 @@ async def get_license_status():
             # No successful uploads yet - show warning after 4 days
             return {
                 "warn": True,
-                "message": "OpenHands Enterprise license verification pending. Please ensure network connectivity."
+                "message": "Vyzorix Enterprise license verification pending. Please ensure network connectivity."
             }
 
         # Check if last successful upload was more than 4 days ago
@@ -551,9 +551,9 @@ async def get_license_status():
                 days_until_expiration = (expiration_date - datetime.now(timezone.utc)).days
 
                 if days_until_expiration <= 0:
-                    message = "Your OpenHands Enterprise license has expired. Please contact support immediately."
+                    message = "Your Vyzorix Enterprise license has expired. Please contact support immediately."
                 else:
-                    message = f"Your OpenHands Enterprise license will expire in {days_until_expiration} days. Please contact support if this issue persists."
+                    message = f"Your Vyzorix Enterprise license will expire in {days_until_expiration} days. Please contact support if this issue persists."
 
                 return {"warn": True, "message": message}
 
@@ -620,7 +620,7 @@ export function LicenseWarningBanner() {
 
 ### 4.5 Cronjob Configuration
 
-The cronjob configurations will be deployed via the OpenHands-Cloud helm charts.
+The cronjob configurations will be deployed via the Vyzorix-Cloud helm charts.
 
 #### 4.5.1 Collection Cronjob
 
@@ -733,16 +733,16 @@ All implementation must pass existing lints and tests. New functionality require
 
 ### 5.1 Database Schema and Models (M1)
 
-**Repository**: OpenHands
+**Repository**: Vyzorix
 Establish the foundational database schema and SQLAlchemy models for telemetry data storage.
 
-#### 5.1.1 OpenHands - Database Migration
+#### 5.1.1 Vyzorix - Database Migration
 
 - [ ] `enterprise/migrations/versions/077_create_telemetry_tables.py`
 - [ ] `enterprise/storage/telemetry_metrics.py`
 - [ ] `enterprise/storage/telemetry_config.py`
 
-#### 5.1.2 OpenHands - Model Tests
+#### 5.1.2 Vyzorix - Model Tests
 
 - [ ] `enterprise/tests/unit/storage/test_telemetry_metrics.py`
 - [ ] `enterprise/tests/unit/storage/test_telemetry_config.py`
@@ -751,23 +751,23 @@ Establish the foundational database schema and SQLAlchemy models for telemetry d
 
 ### 5.2 Metrics Collection Framework (M2)
 
-**Repository**: OpenHands
+**Repository**: Vyzorix
 Implement the pluggable metrics collection system with registry and base classes.
 
-#### 5.2.1 OpenHands - Core Collection Framework
+#### 5.2.1 Vyzorix - Core Collection Framework
 
 - [ ] `enterprise/server/telemetry/__init__.py`
 - [ ] `enterprise/server/telemetry/collector_base.py`
 - [ ] `enterprise/server/telemetry/collector_registry.py`
 - [ ] `enterprise/server/telemetry/decorators.py`
 
-#### 5.2.2 OpenHands - Example Collectors
+#### 5.2.2 Vyzorix - Example Collectors
 
 - [ ] `enterprise/server/telemetry/collectors/__init__.py`
 - [ ] `enterprise/server/telemetry/collectors/system_metrics.py`
 - [ ] `enterprise/server/telemetry/collectors/user_activity.py`
 
-#### 5.2.3 OpenHands - Framework Tests
+#### 5.2.3 Vyzorix - Framework Tests
 
 - [ ] `enterprise/tests/unit/telemetry/test_collector_base.py`
 - [ ] `enterprise/tests/unit/telemetry/test_collector_registry.py`
@@ -777,20 +777,20 @@ Implement the pluggable metrics collection system with registry and base classes
 
 ### 5.3 Collection and Upload Processors (M3)
 
-**Repository**: OpenHands
+**Repository**: Vyzorix
 Implement maintenance task processors for collecting metrics and uploading to Replicated.
 
-#### 5.3.1 OpenHands - Collection Processor
+#### 5.3.1 Vyzorix - Collection Processor
 
 - [ ] `enterprise/server/telemetry/collection_processor.py`
 - [ ] `enterprise/tests/unit/telemetry/test_collection_processor.py`
 
-#### 5.3.2 OpenHands - Upload Processor
+#### 5.3.2 Vyzorix - Upload Processor
 
 - [ ] `enterprise/server/telemetry/upload_processor.py`
 - [ ] `enterprise/tests/unit/telemetry/test_upload_processor.py`
 
-#### 5.3.3 OpenHands - Integration Tests
+#### 5.3.3 Vyzorix - Integration Tests
 
 - [ ] `enterprise/tests/integration/test_telemetry_flow.py`
 
@@ -798,15 +798,15 @@ Implement maintenance task processors for collecting metrics and uploading to Re
 
 ### 5.4 License Warning API (M4)
 
-**Repository**: OpenHands
+**Repository**: Vyzorix
 Implement the license status endpoint for the warning system.
 
-#### 5.4.1 OpenHands - License Status API
+#### 5.4.1 Vyzorix - License Status API
 
 - [ ] `enterprise/server/routes/license.py`
 - [ ] `enterprise/tests/unit/routes/test_license.py`
 
-#### 5.4.2 OpenHands - API Integration
+#### 5.4.2 Vyzorix - API Integration
 
 - [ ] Update `enterprise/saas_server.py` to include license router
 
@@ -814,15 +814,15 @@ Implement the license status endpoint for the warning system.
 
 ### 5.5 UI Warning Banner (M5)
 
-**Repository**: OpenHands
+**Repository**: Vyzorix
 Implement the frontend warning banner component and integration.
 
-#### 5.5.1 OpenHands - UI Warning Banner
+#### 5.5.1 Vyzorix - UI Warning Banner
 
 - [ ] `frontend/src/components/features/license/license-warning-banner.tsx`
 - [ ] `frontend/src/components/features/license/license-warning-banner.test.tsx`
 
-#### 5.5.2 OpenHands - UI Integration
+#### 5.5.2 Vyzorix - UI Integration
 
 - [ ] Update main UI layout to include license warning banner
 - [ ] Add license status polling service
@@ -831,15 +831,15 @@ Implement the frontend warning banner component and integration.
 
 ### 5.6 Helm Chart Deployment Configuration (M6)
 
-**Repository**: OpenHands-Cloud
+**Repository**: Vyzorix-Cloud
 Create Kubernetes cronjob configurations and deployment scripts.
 
-#### 5.6.1 OpenHands-Cloud - Cronjob Manifests
+#### 5.6.1 Vyzorix-Cloud - Cronjob Manifests
 
 - [ ] `charts/openhands/templates/telemetry-collection-cronjob.yaml`
 - [ ] `charts/openhands/templates/telemetry-upload-cronjob.yaml`
 
-#### 5.6.2 OpenHands-Cloud - Configuration Management
+#### 5.6.2 Vyzorix-Cloud - Configuration Management
 
 - [ ] `charts/openhands/templates/replicated-secret.yaml`
 - [ ] Update `charts/openhands/values.yaml` with telemetry configuration options:
@@ -859,22 +859,22 @@ Create Kubernetes cronjob configurations and deployment scripts.
 
 ### 5.7 Documentation and Enhanced Collectors (M7)
 
-**Repository**: OpenHands
+**Repository**: Vyzorix
 Add comprehensive metrics collectors, monitoring capabilities, and documentation.
 
-#### 5.7.1 OpenHands - Advanced Collectors
+#### 5.7.1 Vyzorix - Advanced Collectors
 
 - [ ] `enterprise/server/telemetry/collectors/conversation_metrics.py`
 - [ ] `enterprise/server/telemetry/collectors/integration_usage.py`
 - [ ] `enterprise/server/telemetry/collectors/performance_metrics.py`
 
-#### 5.7.2 OpenHands - Monitoring and Testing
+#### 5.7.2 Vyzorix - Monitoring and Testing
 
 - [ ] `enterprise/server/telemetry/monitoring.py`
 - [ ] `enterprise/tests/e2e/test_telemetry_system.py`
 - [ ] Performance tests for large-scale metric collection
 
-#### 5.7.3 OpenHands - Technical Documentation
+#### 5.7.3 Vyzorix - Technical Documentation
 
 - [ ] `enterprise/server/telemetry/README.md`
 - [ ] Update deployment documentation with telemetry configuration instructions

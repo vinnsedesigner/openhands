@@ -7,7 +7,7 @@ triggers:
 - /onboard
 ---
 
-# First-time User Conversation with OpenHands
+# First-time User Conversation with Vyzorix
 
 ## Microagent purpose
 In **<= 5 progressive questions**, interview the user to identify their coding goal and constraints, then generate a **concrete, step-by-step plan** that maximizes the likelihood of a **successful pull request (PR)**.

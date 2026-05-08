@@ -1,7 +1,7 @@
 # Develop in Docker
 
 > [!WARNING]
-> This way of running OpenHands is not officially supported. It is maintained by the community and may not work.
+> This way of running Vyzorix is not officially supported. It is maintained by the community and may not work.
 
 Install [Docker](https://docs.docker.com/engine/install/) on your host machine and run:
 
@@ -12,7 +12,7 @@ cd ./containers/dev
 ./dev.sh
 ```
 
-It could take some time if you are running for the first time as Docker will pull all the  tools required for building OpenHands. The next time you run again, it should be instant.
+It could take some time if you are running for the first time as Docker will pull all the  tools required for building Vyzorix. The next time you run again, it should be instant.
 
 ## Build and run
 
@@ -42,7 +42,7 @@ The following are also mapped as readonly from your host:
 
 Alternatively, if you use VSCode, you could also [attach to the running container](https://code.visualstudio.com/docs/devcontainers/attach-container).
 
-See details for [developing in docker](https://code.visualstudio.com/docs/devcontainers/containers) or simply ask `OpenHands` ;-)
+See details for [developing in docker](https://code.visualstudio.com/docs/devcontainers/containers) or simply ask `Vyzorix` ;-)
 
 ## Rebuild dev image
 
