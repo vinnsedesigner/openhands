@@ -11,8 +11,8 @@
 
 /* OLD TAILWIND STYLES */
 @theme {
-  --color-primary: #c9b974;
-  --color-logo: #cfb755;
+  --color-primary: #f43f5e;
+  --color-logo: #f43f5e;
   --color-base: #0d0f11;
   --color-base-secondary: #24272e;
   --color-danger: #e76a5e;
@@ -212,34 +212,34 @@
 }
 
 .loader {
-  background: #c9b974;
+  background: #f43f5e;
   animation: l5 1s infinite linear alternate;
 }
 
 @keyframes l5 {
   0% {
     box-shadow:
-      20px 0 #c9b974,
-      -20px 0 rgba(201, 185, 116, 0.1);
-    background: #c9b974;
+      20px 0 #f43f5e,
+      -20px 0 rgba(244, 63, 94, 0.1);
+    background: #f43f5e;
   }
   33% {
     box-shadow:
-      20px 0 #c9b974,
-      -20px 0 rgba(201, 185, 116, 0.1);
-    background: rgba(201, 185, 116, 0.1);
+      20px 0 #f43f5e,
+      -20px 0 rgba(244, 63, 94, 0.1);
+    background: rgba(244, 63, 94, 0.1);
   }
   66% {
     box-shadow:
-      20px 0 rgba(201, 185, 116, 0.1),
-      -20px 0 #c9b974;
-    background: rgba(201, 185, 116, 0.1);
+      20px 0 rgba(244, 63, 94, 0.1),
+      -20px 0 #f43f5e;
+    background: rgba(244, 63, 94, 0.1);
   }
   100% {
     box-shadow:
-      20px 0 rgba(201, 185, 116, 0.1),
-      -20px 0 #c9b974;
-    background: #c9b974;
+      20px 0 rgba(244, 63, 94, 0.1),
+      -20px 0 #f43f5e;
+    background: #f43f5e;
   }
 }
 
