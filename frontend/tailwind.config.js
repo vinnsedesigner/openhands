@@ -9,7 +9,7 @@ export default {
         modal: {
           background: "#171717",
           input: "#27272A",
-          primary: "#F3CE49",
+          primary: "#f43f5e",
           secondary: "#737373",
           muted: "#A3A3A3",
         },

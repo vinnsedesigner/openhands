@@ -1,0 +1,10 @@
+<svg width="1365" height="1365" viewBox="0 -24 148 148" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Vyzorix "V" Logo - White version for dark backgrounds -->
+  <!-- Geometric V shape with a subtle tech/circuit accent -->
+  <path d="M24 12 L74 88 L124 12" stroke="white" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Small diamond accent at the bottom point -->
+  <path d="M74 72 L82 80 L74 88 L66 80 Z" fill="white"/>
+  <!-- Subtle dot accents at the top -->
+  <circle cx="24" cy="12" r="6" fill="white"/>
+  <circle cx="124" cy="12" r="6" fill="white"/>
+</svg>
