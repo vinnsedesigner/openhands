@@ -1,8 +1,8 @@
-# Getting Started with the OpenHands Frontend
+# Getting Started with the Vyzorix Frontend
 
 ## Overview
 
-This is the frontend of the OpenHands project. It is a React application that provides a web interface for the OpenHands project.
+This is the frontend of the Vyzorix project. It is a React application that provides a web interface for the Vyzorix project.
 
 ## Tech Stack
 
@@ -30,7 +30,7 @@ This is the frontend of the OpenHands project. It is a React application that pr
 git clone https://github.com/OpenHands/OpenHands.git
 
 # Change the directory to the frontend
-cd OpenHands/frontend
+cd Vyzorix/frontend
 
 # Install the dependencies
 npm install

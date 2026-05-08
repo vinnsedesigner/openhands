@@ -1,6 +1,6 @@
 # Maintenance Task System
 
-This package contains the maintenance task system for running background maintenance operations in the OpenHands deployment wrapper.
+This package contains the maintenance task system for running background maintenance operations in the Vyzorix deployment wrapper.
 
 ## Overview
 

@@ -1,6 +1,6 @@
 # Conversation Management
 
-Manages app conversations and their lifecycle within the OpenHands app server.
+Manages app conversations and their lifecycle within the Vyzorix app server.
 
 ## Overview
 

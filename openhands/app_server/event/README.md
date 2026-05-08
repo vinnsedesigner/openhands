@@ -1,6 +1,6 @@
 # Event Management
 
-Handles event storage, retrieval, and streaming for the OpenHands app server.
+Handles event storage, retrieval, and streaming for the Vyzorix app server.
 
 ## Overview
 

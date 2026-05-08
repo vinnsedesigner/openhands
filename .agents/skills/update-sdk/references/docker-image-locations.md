@@ -1,6 +1,6 @@
 # Docker Image Locations — Complete Inventory
 
-Every file in the OpenHands repository containing a hardcoded Docker image tag, repository, or version-pinned image reference. Organized by update cadence.
+Every file in the Vyzorix repository containing a hardcoded Docker image tag, repository, or version-pinned image reference. Organized by update cadence.
 
 ## Updated During SDK Bump (must change)
 

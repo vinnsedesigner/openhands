@@ -1,6 +1,6 @@
-# OpenHands FileStore Module
+# Vyzorix FileStore Module
 
-The file store module provides different storage backends for file operations in OpenHands. This module implements a common interface (`FileStore`) that allows for interchangeable storage backends.
+The file store module provides different storage backends for file operations in Vyzorix. This module implements a common interface (`FileStore`) that allows for interchangeable storage backends.
 
 All FileStore implementations use `DiscriminatedUnionMixin` for automatic serialization/deserialization with a `kind` discriminator field based on the class name.
 
@@ -65,7 +65,7 @@ Google Cloud Storage uses GCS buckets for file storage.
 
 ## Configuration
 
-To configure the file store in OpenHands, use the following configuration options:
+To configure the file store in Vyzorix, use the following configuration options:
 
 ```toml
 [core]

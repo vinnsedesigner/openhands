@@ -4,7 +4,7 @@
 
 React Router components and hooks require a routing context to function. In tests, we need to provide this context while maintaining control over the routing state.
 
-This guide covers the two main approaches used in the OpenHands frontend:
+This guide covers the two main approaches used in the Vyzorix frontend:
 
 1. **`createRoutesStub`** - Creates a complete route structure for testing components with their actual route configuration, loaders, and nested routes.
 2. **`MemoryRouter`** - Provides a minimal routing context for components that just need router hooks to work.

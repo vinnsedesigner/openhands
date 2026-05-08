@@ -1,6 +1,6 @@
 # External Integrations
 
-OpenHands integrates with external services (GitHub, Slack, Jira, etc.) through webhook-based event handling:
+Vyzorix integrates with external services (GitHub, Slack, Jira, etc.) through webhook-based event handling:
 
 ```mermaid
 sequenceDiagram
@@ -20,7 +20,7 @@ sequenceDiagram
 
     IntRouter->>Manager: Parse event payload
     Note over Manager: Extract context (repo, issue, user)
-    Note over Manager: Map external user → OpenHands user
+    Note over Manager: Map external user → Vyzorix user
 
     Manager->>Conv: Create conversation (with issue context)
     Conv->>Sandbox: Provision sandbox

@@ -1,6 +1,6 @@
 ---
 name: cross-repo-testing
-description: This skill should be used when the user asks to "test a cross-repo feature", "deploy a feature branch to staging", "test SDK against OH Cloud", "e2e test a cloud workspace feature", "test provider tokens", "test secrets inheritance", or when changes span the SDK and OpenHands server repos and need end-to-end validation against a staging deployment.
+description: This skill should be used when the user asks to "test a cross-repo feature", "deploy a feature branch to staging", "test SDK against OH Cloud", "e2e test a cloud workspace feature", "test provider tokens", "test secrets inheritance", or when changes span the SDK and Vyzorix server repos and need end-to-end validation against a staging deployment.
 triggers:
 - cross-repo
 - staging deployment
@@ -9,16 +9,16 @@ triggers:
 - e2e cloud
 ---
 
-# Cross-Repo Testing: SDK ↔ OpenHands Cloud
+# Cross-Repo Testing: SDK ↔ Vyzorix Cloud
 
-How to end-to-end test features that span `OpenHands/software-agent-sdk` and `OpenHands/OpenHands` (the Cloud backend).
+How to end-to-end test features that span `Vyzorix/software-agent-sdk` and `Vyzorix/Vyzorix` (the Cloud backend).
 
 ## Repository Map
 
 | Repo | Role | What lives here |
 |------|------|-----------------|
 | [`software-agent-sdk`](https://github.com/OpenHands/software-agent-sdk) | Agent core | `openhands-sdk`, `openhands-workspace`, `openhands-tools` packages. `OpenHandsCloudWorkspace` lives here. |
-| [`OpenHands`](https://github.com/OpenHands/OpenHands) | Cloud backend | FastAPI server (`openhands/app_server/`), sandbox management, auth, enterprise integrations. Deployed as OH Cloud. |
+| [`Vyzorix`](https://github.com/OpenHands/OpenHands) | Cloud backend | FastAPI server (`openhands/app_server/`), sandbox management, auth, enterprise integrations. Deployed as OH Cloud. |
 | [`deploy`](https://github.com/OpenHands/deploy) | Infrastructure | Helm charts + GitHub Actions that build the enterprise Docker image and deploy to staging/production. |
 
 **Data flow:** SDK client → OH Cloud API (`/api/v1/...`) → sandbox agent-server (inside runtime container)
@@ -42,10 +42,10 @@ Use this when the SDK calls an endpoint that only exists on the server PR branch
 
 ### A1. Write and test the server-side changes
 
-In the `OpenHands` repo, implement the new API endpoint(s). Run unit tests:
+In the `Vyzorix` repo, implement the new API endpoint(s). Run unit tests:
 
 ```bash
-cd OpenHands
+cd Vyzorix
 poetry run pytest tests/unit/app_server/test_<relevant>.py -v
 ```
 
@@ -85,32 +85,32 @@ Find the correct image tag:
 - Check the SDK PR description for an `AGENT_SERVER_IMAGES` section
 - Or check the "Consolidate Build Information" CI job for `"short_sha": "<tag>"`
 
-### B2. Pin SDK packages to the commit in the OpenHands PR
+### B2. Pin SDK packages to the commit in the Vyzorix PR
 
-In the `OpenHands` repo PR, pin all 3 SDK packages (`openhands-sdk`, `openhands-agent-server`, `openhands-tools`) to the unreleased commit and update the agent-server image tag. This involves editing 3 files and regenerating 3 lock files.
+In the `Vyzorix` repo PR, pin all 3 SDK packages (`openhands-sdk`, `openhands-agent-server`, `openhands-tools`) to the unreleased commit and update the agent-server image tag. This involves editing 3 files and regenerating 3 lock files.
 
 Follow the **`update-sdk` skill** → "Development: Pin SDK to an Unreleased Commit" section for the full procedure and file-by-file instructions.
 
-### B3. Wait for the OpenHands enterprise image to build
+### B3. Wait for the Vyzorix enterprise image to build
 
-Push the pinned changes. The OpenHands CI will build a new enterprise Docker image (`ghcr.io/openhands/enterprise-server:sha-<OH_COMMIT>`) that bundles the unreleased SDK. Wait for the "Push Enterprise Image" job to succeed.
+Push the pinned changes. The Vyzorix CI will build a new enterprise Docker image (`ghcr.io/openhands/enterprise-server:sha-<OH_COMMIT>`) that bundles the unreleased SDK. Wait for the "Push Enterprise Image" job to succeed.
 
 ### B4. Deploy and test
 
-Follow [Deploying to a Staging Feature Environment](#deploying-to-a-staging-feature-environment) using the new OpenHands commit SHA.
+Follow [Deploying to a Staging Feature Environment](#deploying-to-a-staging-feature-environment) using the new Vyzorix commit SHA.
 
 ### B5. Before merging: remove the pin
 
-**CI guard:** `check-package-versions.yml` blocks merge to `main` if `[tool.poetry.dependencies]` contains `rev` fields. Before the OpenHands PR can merge, the SDK PR must be merged and released to PyPI, then the pin must be replaced with the released version number.
+**CI guard:** `check-package-versions.yml` blocks merge to `main` if `[tool.poetry.dependencies]` contains `rev` fields. Before the Vyzorix PR can merge, the SDK PR must be merged and released to PyPI, then the pin must be replaced with the released version number.
 
 ---
 
 ## Deploying to a Staging Feature Environment
 
-The `deploy` repo creates preview environments from OpenHands PRs.
+The `deploy` repo creates preview environments from Vyzorix PRs.
 
 **Option A — GitHub Actions UI (preferred):**
-Go to `OpenHands/deploy` → Actions → "Create OpenHands preview PR" → enter the OpenHands PR number. This creates a branch `ohpr-<PR>-<random>` and opens a deploy PR.
+Go to `Vyzorix/deploy` → Actions → "Create Vyzorix preview PR" → enter the Vyzorix PR number. This creates a branch `ohpr-<PR>-<random>` and opens a deploy PR.
 
 **Option B — Update an existing feature branch:**
 ```bash
@@ -124,7 +124,7 @@ git commit -am "Update OPENHANDS_SHA to <commit>" && git push
 
 **Before updating the SHA**, verify the enterprise Docker image exists:
 ```bash
-gh api repos/OpenHands/OpenHands/actions/runs \
+gh api repos/Vyzorix/Vyzorix/actions/runs \
   --jq '.workflow_runs[] | select(.head_sha=="<COMMIT>") | "\(.name): \(.conclusion)"' \
   | grep Docker
 # Must show: "Docker: success"
@@ -194,9 +194,9 @@ Comment on **both PRs** with pass/fail summary and link to logs.
 |--------|---------|
 | **Feature env auth is isolated** | Each `ohpr-*` deployment has its own Keycloak. Production API keys don't work. Agents cannot log in — you must ask the user to provide a test API key from the feature deployment's UI. |
 | **Two SHAs in deploy.yaml** | `OPENHANDS_SHA` and `OPENHANDS_RUNTIME_IMAGE_TAG` must both be updated. The runtime tag is `<sha>-nikolaik`. |
-| **Enterprise image must exist** | The Docker CI job on the OpenHands PR must succeed before you can deploy. If it hasn't run, push an empty commit to trigger it. |
+| **Enterprise image must exist** | The Docker CI job on the Vyzorix PR must succeed before you can deploy. If it hasn't run, push an empty commit to trigger it. |
 | **DNS propagation** | First deployment of a new branch takes 1-2 min for DNS. Subsequent deploys are instant. |
 | **Merge-commit SHA ≠ head SHA** | SDK CI tags Docker images with GitHub Actions' merge-commit SHA, not the PR head SHA. Check the SDK PR description or CI logs for the correct tag. |
-| **SDK pin blocks merge** | `check-package-versions.yml` prevents merging an OpenHands PR that has `rev` fields in `[tool.poetry.dependencies]`. The SDK must be released to PyPI first. |
+| **SDK pin blocks merge** | `check-package-versions.yml` prevents merging an Vyzorix PR that has `rev` fields in `[tool.poetry.dependencies]`. The SDK must be released to PyPI first. |
 | **Flow A: stock agent-server is fine** | When only the Cloud API changes, `OpenHandsCloudWorkspace` talks to the Cloud server, not the agent-server. No custom image needed. |
 | **Flow B: agent-server image is required** | When the server needs new SDK code inside runtime containers, you must pin to the SDK PR's agent-server image. |

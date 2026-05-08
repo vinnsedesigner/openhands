@@ -2,7 +2,7 @@
 
 You have a few options here, which are expanded on below:
 
-- A simple local development setup, with live reloading for both OpenHands and this repo
+- A simple local development setup, with live reloading for both Vyzorix and this repo
 - A more complex setup that includes Redis
 - An even more complex setup that includes GitHub events
 
@@ -26,16 +26,16 @@ Before starting, make sure you have the following tools installed:
 
 ## Option 1: Simple local development
 
-This option will allow you to modify both the OpenHands code and the code in this repo,
+This option will allow you to modify both the Vyzorix code and the code in this repo,
 and see the changes in real-time.
 
 This option works best for most scenarios. The only thing it's missing is
 the GitHub events webhook, which is not necessary for most development.
 
-### 1. OpenHands location
+### 1. Vyzorix location
 
-The open source OpenHands repo should be cloned as a sibling directory,
-in `../OpenHands`. This is hard-coded in the pyproject.toml (edit if necessary)
+The open source Vyzorix repo should be cloned as a sibling directory,
+in `../Vyzorix`. This is hard-coded in the pyproject.toml (edit if necessary)
 
 If you're doing this the first time, you may need to run
 
@@ -67,9 +67,9 @@ By default the application will log in json, you can override.
 export LOG_PLAIN_TEXT=1
 ```
 
-### 3. Start the OpenHands frontend
+### 3. Start the Vyzorix frontend
 
-Start the frontend like you normally would in the open source OpenHands repo.
+Start the frontend like you normally would in the open source Vyzorix repo.
 
 ### 4. Start the SaaS backend
 
@@ -98,7 +98,7 @@ export REDIS_PORT=6379
 
 (see above)
 
-### 2. Build OpenHands
+### 2. Build Vyzorix
 
 Develop on [Openhands](https://github.com/OpenHands/OpenHands) locally. When ready, run the following inside Openhands repo (not the Deploy repo)
 
@@ -148,7 +148,7 @@ Visit the tunnel domain found in Step 4 to run the app (`https://bc71-2603-7000-
 
 ### Local Debugging with VSCode
 
-Local Development necessitates running a version of OpenHands that is as similar as possible to the version running in the SAAS Environment. Before running these steps, it is assumed you have a local development version of OpenHands running.
+Local Development necessitates running a version of Vyzorix that is as similar as possible to the version running in the SAAS Environment. Before running these steps, it is assumed you have a local development version of Vyzorix running.
 
 #### Redis
 
@@ -178,7 +178,7 @@ And then invoking `printenv`. NOTE: _DO NOT DO THIS WITH PROD!!!_ (Hopefully by 
             "program": "${file}"
         },
         {
-            "name": "OpenHands Deploy",
+            "name": "Vyzorix Deploy",
             "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
@@ -211,7 +211,7 @@ And then invoking `printenv`. NOTE: _DO NOT DO THIS WITH PROD!!!_ (Hopefully by 
             "cwd": "${workspaceFolder}/app"
         },
         {
-            "name": "OpenHands Deploy 2",
+            "name": "Vyzorix Deploy 2",
             "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",

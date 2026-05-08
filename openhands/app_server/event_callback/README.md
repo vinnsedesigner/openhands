@@ -4,7 +4,7 @@ Manages webhooks and event callbacks for external system integration.
 
 ## Overview
 
-This module provides webhook and callback functionality, allowing external systems to receive notifications when specific events occur within OpenHands conversations.
+This module provides webhook and callback functionality, allowing external systems to receive notifications when specific events occur within Vyzorix conversations.
 
 ## Key Components
 
