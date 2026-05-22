@@ -1,0 +1,420 @@
+can you assemble into final repo structure tree , and make sure no missing files or missing descriptions per file 👌;
+
+
+VyzorixAudioRouter/
+├── .devcontainer/                          # 🛠️ Remote cloud engine workspace container configuration
+│   ├── devcontainer.json                   # ☁️ Configures remote cloud engine workspace lifecycles
+│   └── Dockerfile                          # 🐋 Blueprint building the cloud container with NDK/SDK tools
+├── .dockerignore                           # 🚫 Excludes bulky local files from uploading to the build container
+├── .github/workflows/                      # 🤖 CI/CD Automation Pipelines
+│   ├── release_build.yml                   # 📦 Automated CI server pipeline compiling production binaries
+│   ├── save_proguard_mapping.yml           # 🗺️ Extracts and backs up de-obfuscation maps for remote debugging
+│   └── ci_lint_check.yml                   # 🛑 Automatic code-hygiene gatekeeper that stops broken pushes
+├── .vscode/                                # ⚙️ Editor Workspace Environment Settings
+│   ├── extensions.json                     # 🔌 Auto-installs essential tool plugins in your browser workspace
+│   └── settings.json                       # ⚙️ Locks down formatting, tab-widths, and environment paths
+├── config/lint/                            # 🛡️ Code Hygiene Rulesets
+│   ├── lint.xml                            # 🛡️ Configures rules to bypass minor warnings while catching severe bugs
+│   └── detekt.yml                          # 🕵️‍♂️ Strict static code analysis rules for high-quality Kotlin
+├── docs/                                   # 🗒️ Engineering Blueprints & Logs
+│   ├── MEMORY_OFFSETS.md                   # 💾 Dynamic address offsets tracking system audio configurations
+│   └── ARCHITECTURE.md                     # 📐 Master blueprints mapping JNI to high-performance engines
+├── gradle/                                 # 🧬 Build System Core Configuration
+│   ├── libs.versions.toml                  # 📦 Single source of truth for tracking dependency versions
+│   └── wrapper/                            
+│       ├── gradle-wrapper.jar              # 🧬 Self-contained compiler binary bootstrap engine
+│       └── gradle-wrapper.properties       # 🛠️ Sets specific Gradle versions and distribution links
+├── scripts/                                # 🚀 Local & CI Workflow Scripts
+│   ├── build_ndk_cloud.sh                  # 🚀 Compiles native C++ on remote cloud setups to save workspace RAM
+│   ├── ci_prep_ndk_cache.sh                # ⏳ Caches previous C++ object files to accelerate cloud build cycles
+│   └── inject_ci_secrets.sh                # 🔑 Automatically injects protected workspace keys during CI runs
+├── .clang-format                           # 🧹 Enforces unified styling syntax across all native C++ code
+├── .editorconfig                           # 📐 Synced styling guide matching formatting between multiple tools
+├── .gitattributes                          # 🧬 Specifies path-specific attributes like line endings
+├── .gitignore                              # 🚫 Tells Git which files to completely ignore
+├── .prettierignore                         # 🛑 Keeps asset/code strings safe from layout auto-formatters
+├── LICENSE                                 # ⚖️ Formally defines legal reuse structures
+├── local.properties                        # 🧠 Maps physical paths for Android NDK and SDK sets locally
+├── Makefile                                # ⌨️ Maps long, annoying compilation strings to short alias macros
+├── README.md                               # 🗒️ The documentation hub explaining setup and project design
+├── build.gradle.kts                        # 🧬 Master script orchestration layer registering plugins
+├── gradle.properties                       # 🧠 Allocates optimal memory usage limits for the JVM
+├── gradlew                                 # 🏃‍♂️ Unix command script ensuring safe local builds
+├── gradlew.bat                             # 🏃‍♂️ Windows alternative script wrapper
+├── secrets.properties                      # 🔒 Decouples highly sensitive passwords from public repo tracking
+├── settings.gradle.kts                     # 🏗️ Registers the system module landscape
+│
+├── app/                                    # 📱 THE ORCHESTRATOR (Builds final APK)
+│   ├── build.gradle.kts                    # 🏗️ Bundles core packages into a single operational release
+│   ├── proguard-rules.pro                  # 🚫 Explicitly protects functional JNI entry points from optimizer code pruning
+│   └── src/main/                           
+│       ├── AndroidManifest.xml             # 🛡️ MASTER MANIFEST (Declares final app properties & permissions)
+│       └── kotlin/com/vyzorix/audiorouter/ 
+│           └── VyzorixApplication.kt       # 🔋 Native library startup hook loading custom bindings early
+│
+└── core/                                   # 🏗️ CORE INFRASTRUCTURE LAYER
+    │
+    ├── common/                             # 💎 SHARED UTILITIES
+    │   ├── build.gradle.kts                # 🧪 Compiles helper layers into a shared isolated package
+    │   └── src/main/                       
+    │       ├── AndroidManifest.xml         # 🔥 Local library manifest configuration
+    │       └── kotlin/com/vyzorix/audiorouter/common/
+    │           ├── utils/                  
+    │           │   ├── ShellExecutor.kt    # 💻 Safely runs backend Linux shell tasks asynchronously
+    │           │   ├── Logger.kt           # 📝 High-speed tracker logging both C++ and Kotlin contexts
+    │           │   ├── WakeLockManager.kt  # 🔌 Prevents the CPU from sleeping mid-routing task
+    │           │   └── ParcelFdBridge.kt   # 🔀 Pipes raw Unix File Descriptors cleanly through Inter-Process Communication
+    │           └── rx/                     
+    │               └── ChannelStateDataFlow.kt # 🌊 Reactive flow tracking live channel state switches
+    │
+    ├── native/                             # 🦾 THE NATIVE ENGINE (C++ / JNI)
+    │   ├── build.gradle.kts                # 🏗️ Orchestrates C++ NDK generation tasks
+    │   ├── CMakeLists.txt                  # 🛠️ Master script coordinating target source code builds
+    │   ├── libs/                           
+    │   │   ├── framework.jar               # 🧬 Private platform stubs used to spoof compiler linkages
+    │   │   ├── android.jar                 # 🧬 Core framework reference stubs
+    │   │   └── libaudioclient.so           # 🧬 Dynamic native library bindings mapping engine tasks
+    │   └── src/                            
+    │       ├── main/                       
+    │       │   ├── AndroidManifest.xml     # 🔥 Local library manifest configuration
+    │       │   ├── cpp/                    # 🦾 Low-Latency C++ Engine Source Code
+    │       │   │   ├── CMakeLists.txt      # 🛠️ Localized C++ target definitions mapping compiler flags
+    │       │   │   ├── vyzorix.map          # 🗺️ Keeps the library secure by exposing only official JNI symbols
+    │       │   │   ├── jni_onload.cpp      # 🏁 Initializes environment thread links and pre-binds functions
+    │       │   │   ├── vyzorix-router.cpp  # 🎛️ The pure performance engine loops feeding PCM data vectors
+    │       │   │   ├── libaudioclient_proxy.cpp # 🎚️ Proxy hook linking into internal hardware layouts
+    │       │   │   ├── vyzorix_memory_patcher.cpp # 🎯 Live process scanning and address pointer injection tool
+    │       │   │   ├── reflection_unhooker.cpp # 🔥 Dynamic native unsealer bypassing API access locks
+    │       │   │   ├── sentinel_main.cpp   # 👮‍♂️ Dedicated monitor isolating memory pointers against crashes
+    │       │   │   ├── logger_engine.cpp   # 📊 Superfast lock-free log handler that won't lag sound layers
+    │       │   │   ├── crash_handler.cpp   # 🪂 Catches critical native faults (SIGSEGV) before a hard exit
+    │       │   │   ├── ipc_client.cpp      # 🦾 Native mmap data plane layer driving memory streaming loops
+    │       │   │   │
+    │       │   │   # --- Integrated High-Performance C++ Sub-Engines ---
+    │       │   │   ├── trampoline_allocator.cpp # 🦘 [3] Allocates and configures executable page memory for assembly jumps
+    │       │   │   ├── linker_ns_bypass.cpp # 🔓 [4] Bypasses native linker restriction boundaries via dynamic symbol resolution
+    │       │   │   ├── binder_death_handler.cpp # 💀 [5] Catches low-level AudioServer binder drops to trigger engine lifecycles
+    │       │   │   ├── RtThreadScheduler.cpp # 🚀 [6] Elevates audio processing loops into real-time Linux SCHED_FIFO states
+    │       │   │   ├── seccomp_policy_unsealer.cpp # 🛡️ [7] Bypasses restrictive system call blacklists via BPF filter adjustments
+    │       │   │   ├── pcm_resampler.cpp   # 🎚️ [9] Performs ultra-precise linear interpolation on raw PCM hardware samples
+    │       │   │   ├── UnixFdPassedBridge.cpp # 🔀 [10] Passes raw system file descriptors across socket boundaries without cloning
+    │       │   │   ├── signal_fault_isolation.cpp # 🪂 [11] Traps and isolates memory subsystem failures within dedicated threads
+    │       │   │   ├── aaudio_fallback_engine.cpp # 🛹 [12] Legitimate low-latency recovery audio track if direct injection hooks fail
+    │       │   │   ├── native_event_loop.cpp # 🧵 [13] Non-blocking event infrastructure processing immediate hardware notices
+    │       │   │   ├── audio_policy_hijacker.cpp # 🏴‍☠️ [14] Forces routing rules directly into internal AudioPolicyManager symbols
+    │       │   │   ├── clock_drift_compensator.cpp # ⏱️ [15] Micro-adjusts audio sample steps to prevent cross-device buffer tracking drifts
+    │       │   │   ├── engine_unhooker.cpp  # 🧯 [16] Atomically tears down memory hot-patches during emergencies safely
+    │       │   │   ├── ashmem_allocator.cpp # 💾 [17] Low-overhead allocator dealing anonymous Linux shared memory pages
+    │       │   │   ├── proc_maps_parser.cpp # 🔍 [18] Highly optimized, non-allocating text engine traversing /proc/self/maps
+    │       │   │   ├── ahardware_buffer_shuttle.cpp # 🛸 [19] Zero-copy transporter linking internal hardware buffers across interfaces
+    │       │   │   ├── cpu_affinity_lock.cpp # 🔒 [20] Pins low-latency performance threads strictly onto big CPU cores
+    │       │   │   ├── binder_txn_interceptor.cpp # 📡 [21] Peeks inside active native IPC transactions to capture tracking vectors
+    │       │   │   ├── audio_track_state_monitor.cpp # 📊 [22] Watches hardware allocations to instantly trap leaks
+    │       │   │   │
+    │       │   │   └── include/            # 🗄️ Engine Headers & Context Templates
+    │       │   │       ├── AudioSystem.h   # 📻 Intercept layouts matching platform system layers
+    │       │   │       ├── vyzorix_audio_defs.h # 📐 Global constants mapping channel boundaries
+    │       │   │       ├── audiopolicy_mangled_symbols.h # 🗺️ Raw system symbol names mapping deep hook targets
+    │       │   │       ├── crash_handler.h # 🪂 Interface structures definition for signal recovery handlers
+    │       │   │       ├── reflection_unhooker.h # 🔓 Prototypes driving native runtime platform visibility
+    │       │   │       │
+    │       │   │       # --- Shared Engine Header Declarations ---
+    │       │   │       ├── ring_buffer.h   # ⭕ [1] Lockless ring buffer handling safe real-time audio writes
+    │       │   │       ├── AtomicCircularBuffer.h # ⭕ [1] Sibling atomic index tracker preventing race conditions
+    │       │   │       ├── audio_signatures.h # 🕵️‍♂️ [2] Scans memory segments for system version byte matching
+    │       │   │       ├── patterns.json   # 🕵️‍♂️ [2] Static byte dictionary database mapping patterns across OS images
+    │       │   │       ├── trampoline_allocator.h # 🦘 [3] Definitions mapping ARM64 assembly scratchpad setups
+    │       │   │       ├── linker_structs.h # 🔓 [4] Mimics internal OS runtime loader models for bypass tricks
+    │       │   │       ├── jni_ref_guard.h # 🛡️ [8] High-frequency JNI reference recycler stopping local reference spills
+    │       │   │       ├── eventfd_notifier.h # 🧵 [13] Microsecond event notification primitive based on Linux eventfd
+    │       │   │       └── shared_memory_alloc.h # 💾 [17] Structural definitions managing anonymous vector maps
+    │       │   │
+    │       │   └── tests/                  # 🧪 Verification & Sandbox Layers
+    │       │       ├── CMakeLists.txt      # 🛠️ Compiler orchestration managing native unit test targets
+    │       │       └── memory_patcher_test.cpp # 🧪 Isolated local verification tools for testing memory overrides
+    │       │
+    │       │   └── kotlin/com/vyzorix/audiorouter/nativeengine/
+    │       │       └── jni/                
+    │       │           ├── NativeAudioProxy.kt # 🗺️ Declares low-latency C++ links directly inside Kotlin code
+    │       │           └── HiddenApiBypasser.kt # 🔌 Kotlin initialization bridge wiping out system reflection blocks
+    │       │
+    │       └── test/                       
+    │           └── cpp/                    
+    │               └── native_unit_tests.cpp # 🧪 [Test] Native Google Test execution framework validation suite
+    │
+    └── services/                           # 🤖 THE BRAIN (Background Systems & Hooks)
+        ├── build.gradle.kts                # 🏗️ Sets up dependencies for background engine builds
+        └── src/main/                       
+            ├── AndroidManifest.xml         # ⚙️ Local library manifest (Declares Services/Binds)
+            ├── aidl/                       
+            │   └── com/vyzorix/audiorouter/services/
+            │       └── IAudioEngineManager.aidl # 🤝 Rigid blueprint mapping IPC commands across processes
+            ├── assets/routing_profiles/     # 🎛️ Static structural templates defining channel arrays
+            ├── res/                        # 🔥 Service resource layer
+            │   └── xml/                    
+            │       ├── vyzorix_service_config.xml # Deep accessibility engine structural settings
+            │       ├── accessibility_config.xml # Access filters mapping structural event targets
+            │       ├── accessibility_service_config.xml # ⚙️ OS Interception filter configuration
+            │       ├── file_paths.xml      # Rules defining shared secure data paths
+            │       └── network_security_config.xml # Configures sandboxed network debugging loopbacks
+            └── kotlin/com/vyzorix/audiorouter/services/
+                ├── automation/             # 🤖 Screen Automation & Interception Drivers
+                │   ├── AccessibilityNodeParser.kt # 🔍 Dynamic tree explorer identifying hidden options
+                │   ├── GestureDispatcher.kt # 👆 Emulates precise screen touches automatically
+                │   └── SystemSettingsMacroController.kt # 🔥 The node tree analyzer daemon running macros
+                ├── core/                   # 🧠 Persistent Execution Daemons & Management
+                │   ├── VyzorixAccessibilityService.kt # Binds directly to the XML parameters
+                │   ├── ServiceController.kt # 🎛️ Manages operational life parameters across active services
+                │   ├── VyzorixRouterService.kt # 🔋 Main engine keeping routing active in the background
+                │   ├── KeepAliveForegroundService.kt # 🛡️ Keeps the app alive by locking persistent status priorities
+                │   ├── OomScoreAdjusterAnchor.kt # ⚓ Drops the application's out-of-memory crash probability
+                │   ├── ServiceLifecycleController.kt # 🏗️ Safely triggers setup and tear-down code states
+                │   ├── AudioStateEngine.kt # 🧠 Oversees deep audio changes to verify routing metrics
+                │   ├── PolicyHijackSupervisor.kt # 📡 Intercepts system policy switches to preserve sound loops
+                │   ├── PersistenceGuardian.kt # 🔒 Automated health check restoring dead service threads
+                │   ├── JniBridgeDispatcher.kt # 🔀 Pipes real-time analytics data straight down to the engine
+                │   ├── BootLockerOrchestrator.kt # ⚙️ Locks startup tasks into reliable sequential loads
+                │   ├── WebLogDispatcher.kt # 🌐 Streams system diagnostics directly to web-view controllers
+                │   ├── CrashSentinel.kt    # 👮‍♂️ Monitors active system stability flags
+                │   ├── NativeCrashBridge.kt # 🪂 Feeds low-level system faults straight to tracking log engines
+                │   ├── IsolatedLogPump.kt  # 📊 Pushes tracking sequences outside the primary engine threads
+                │   ├── LogcatStreamer.kt   # 📝 Extracts system device metrics for remote tracking
+                │   ├── LogFileManager.kt   # 💾 Flushes active logs safely to system device memory
+                │   │
+                │   # --- Integrated Kotlin Lifecycle Supervisors ---
+                │   ├── NativeBridgeOrchestrator.kt # 🔀 Orchestrates multi-process setups linking dynamic native pointers
+                │   ├── StickyAudioForegroundService.kt # 🔋 High-priority foreground loop that forces immediate OS restarts if killed
+                │   ├── LowMemoryProcessSupervisor.kt # 📉 Clears dynamic frame caches dynamically to keep memory stable
+                │   └── AudioServerDeathRecipient.kt # 💀 [5 sibling] Monitors Binder node drops to restart tracking systems
+                │
+                ├── audio/                  # 🎚️ Advanced Hardware Stream Routing Components
+                │   ├── AudioRoutingEngine.kt # 🎛️ Global conductor managing internal stream connections
+                │   ├── AudioFocusInterceptor.kt # 🛑 Overrides application focus requests to block stream pauses
+                │   ├── SystemSoundReceiver.kt # 📡 Catches device media shifts to synchronize routing logic
+                │   ├── AudioPlaybackMonitor.kt # 🔍 Tracks live stream activity across all apps
+                │   ├── NotificationStreamRouter.kt # 🎚️ Isolates system alerts without interrupting audio output
+                │   ├── StreamStateMatrix.kt # 🗺️ Keeps the current track/device routing configuration mapped cleanly
+                │   ├── HardwareJackDebouncer.kt # 🔌 Screens audio hardware signals to filter plug glitches
+                │   ├── CommunicationRouteProxy.kt # 🔄 Direct management layer hooking deep system dial targets
+                │   ├── DynamicVolumeBalancer.kt # 🎚️ Live audio balance engine leveling stream scales
+                │   ├── StreamFocusArbitrator.kt # 🧠 Decides priority tracks when multiple streams execute at once
+                │   ├── VolumeCurveInterceptor.kt # 📊 Normalizes structural stream curves across physical outputs
+                │   ├── AudioHalSessionResetter.kt # 🔄 Forces deep audio interface clears to refresh device control
+                │   ├── SandboxAudioCaptureEngine.kt # 🔥 The capture hardware loopback system
+                │   ├── AudioProcessingWorker.kt # 🧵 Threading queue runner feeding underlying data tasks
+                │   │
+                │   # --- Integrated Android Framework Hooks ---
+                │   ├── AudioProfileRegistry.kt # 🗃️ Proto DataStore configuration layout mapping persistent properties
+                │   └── SystemAudioFocusInterrupter.kt # 🛑 High-speed interceptor injecting custom prioritization logic
+                │
+                ├── ipc/                    # 🧠 Memory Pipes & Cross-Process Frameworks
+                │   ├── EngineConnectionManager.kt # 🤝 Tracks cross-process handshakes and locks bindings
+                │   ├── AudioEngineStub.kt  # 🔌 Bridge exposing interface features across active modules
+                │   └── SharedAudioBuffer.kt # 🧠 Kotlin SharedMemory allocator handing memory down to C++
+                └── network/                # 🌐 Telemetry Pipelines & Connectivity Drivers
+                    ├── ApiClient.kt        # 🌐 Handles connection checks and external pipeline requests
+                    ├── LogflareClient.kt   
+                    ├── LogflarePayload.kt  # 📊 Packs and pushes telemetry straight to remote monitoring logs
+                    ├── NetworkMonitor.kt   # 📡 Tracks online states to optimize remote telemetry queues
+                    ├── UpdateManager.kt    # ⚙️ Checks configurations to prompt automatic local module updates
+                    │   
+                    # --- Integrated Network Utilities ---
+                    ├── TelemetryStreamAdapter.kt # 📊 Batches high-speed engine trace packets over compact pipes
+                    └── models/             
+                        └── CommandPayload.kt # 📄 Formats structured script actions received over endpoints
+
+👇👇👇
+
+
+VyzorixAudioRouter/
+├── .devcontainer/                         # 🛠️ Remote cloud engine workspace container configuration
+│   ├── devcontainer.json                   # ☁️ Configures remote cloud engine workspace lifecycles
+│   └── Dockerfile                          # 🐋 Blueprint building the cloud container with NDK/SDK tools
+├── .dockerignore                           # 🚫 Excludes bulky local files from uploading to the build container
+├── .github/workflows/                      # 🤖 CI/CD Automation Pipelines
+│   ├── release_build.yml                   # 📦 Automated CI server pipeline compiling production binaries
+│   ├── save_proguard_mapping.yml          # 🗺️ Extracts and backs up de-obfuscation maps for remote debugging
+│   └── ci_lint_check.yml                   # 🛑 Automatic code-hygiene gatekeeper that stops broken pushes
+├── .vscode/                                # ⚙️ Editor Workspace Environment Settings
+│   ├── extensions.json                     # 🔌 Auto-installs essential tool plugins in your browser workspace
+│   └── settings.json                       # ⚙️ Locks down formatting, tab-widths, and environment paths
+├── config/lint/                            # 🛡️ Code Hygiene Rulesets
+│   ├── lint.xml                            # 🛡️ Configures rules to bypass minor warnings while catching severe bugs
+│   └── detekt.yml                          # 🕵️‍♂️ Strict static code analysis rules for high-quality Kotlin
+├── docs/                                   # 🗒️ Engineering Blueprints & Logs
+│   ├── MEMORY_OFFSETS.md                   # 💾 Dynamic address offsets tracking system audio configurations
+│   └── ARCHITECTURE.md                     # 📐 Master blueprints mapping JNI to high-performance engines
+├── gradle/                                 # 🧬 Build System Core Configuration
+│   ├── libs.versions.toml                  # 📦 Single source of truth for tracking dependency versions
+│   └── wrapper/                            
+│       ├── gradle-wrapper.jar              # 🧬 Self-contained compiler binary bootstrap engine
+│       └── gradle-wrapper.properties       # 🛠️ Sets specific Gradle versions and distribution links
+├── scripts/                                # 🚀 Local & CI Workflow Scripts
+│   ├── build_ndk_cloud.sh                  # 🚀 Compiles native C++ on remote cloud setups to save workspace RAM
+│   ├── ci_prep_ndk_cache.sh                # ⏳ Caches previous C++ object files to accelerate cloud build cycles
+│   └── inject_ci_secrets.sh                # 🔑 Automatically injects protected workspace keys during CI runs
+├── .clang-format                           # 🧹 Enforces unified styling syntax across all native C++ code
+├── .editorconfig                           # 📐 Synced styling guide matching formatting between multiple tools
+├── .gitattributes                          # 🧬 Specifies path-specific attributes like line endings
+├── .gitignore                              # 🚫 Tells Git which files to completely ignore
+├── .prettierignore                         # 🛑 Keeps asset/code strings safe from layout auto-formatters
+├── LICENSE                                 # ⚖️ Formally defines legal reuse structures
+├── local.properties                        # 🧠 Maps physical paths for Android NDK and SDK sets locally
+├── Makefile                                # ⌨️ Maps long, annoying compilation strings to short alias macros
+├── README.md                               # 🗒️ The documentation hub explaining setup and project design
+├── build.gradle.kts                        # 🧬 Master script orchestration layer registering plugins
+├── gradle.properties                       # 🧠 Allocates optimal memory usage limits for the JVM
+├── gradlew                                 # 🏃‍♂️ Unix command script ensuring safe local builds
+├── gradlew.bat                             # 🏃‍♂️ Windows alternative script wrapper
+├── secrets.properties                      # 🔒 Decouples highly sensitive passwords from public repo tracking
+├── settings.gradle.kts                     # 🏗️ Registers the system module landscape
+│
+├── app/                                    # 📱 THE ORCHESTRATOR (Builds final APK)
+│   ├── build.gradle.kts                    # 🏗️ Bundles core packages into a single operational release
+│   ├── proguard-rules.pro                  # 🚫 Explicitly protects functional JNI entry points from optimizer code pruning
+│   └── src/main/                           
+│       ├── AndroidManifest.xml             # 🛡️ MASTER MANIFEST (Declares final app properties & permissions)
+│       └── kotlin/com/vyzorix/audiorouter/ 
+│           └── VyzorixApplication.kt       # 🔋 Native library startup hook loading custom bindings early
+│
+└── core/                                   # 🏗️ CORE INFRASTRUCTURE LAYER
+    │
+    ├── common/                             # 💎 SHARED UTILITIES
+    │   ├── build.gradle.kts                # 🧪 Compiles helper layers into a shared isolated package
+    │   └── src/main/                       
+    │       ├── AndroidManifest.xml         # 🔥 Local library manifest configuration
+    │       └── kotlin/com/vyzorix/audiorouter/common/
+    │           ├── utils/                  
+    │           │   ├── ShellExecutor.kt    # 💻 Safely runs backend Linux shell tasks asynchronously
+    │           │   ├── Logger.kt           # 📝 High-speed tracker logging both C++ and Kotlin contexts
+    │           │   ├── WakeLockManager.kt  # 🔌 Prevents the CPU from sleeping mid-routing task
+    │           │   └── ParcelFdBridge.kt   # 🔀 Pipes raw Unix File Descriptors cleanly through Inter-Process Communication
+    │           └── rx/                     
+    │               └── ChannelStateDataFlow.kt # 🌊 Reactive flow tracking live channel state switches
+    │
+    ├── native/                             # 🦾 THE NATIVE ENGINE (C++ / JNI)
+    │   ├── build.gradle.kts                # 🏗️ Orchestrates C++ NDK generation tasks
+    │   ├── CMakeLists.txt                  # 🛠️ Master script coordinating target source code builds
+    │   ├── libs/                           
+    │   │   ├── framework.jar               # 🧬 Private platform stubs used to spoof compiler linkages
+    │   │   ├── android.jar                 # 🧬 Core framework reference stubs
+    │   │   └── libaudioclient.so           # 🧬 Dynamic native library bindings mapping engine tasks
+    │   └── src/main/                       
+    │       ├── AndroidManifest.xml         # 🔥 Local library manifest configuration
+    │       ├── cpp/                        # 🦾 Low-Latency C++ Engine Source Code
+    │       │   ├── CMakeLists.txt          # 🛠️ Localized C++ target definitions mapping compiler flags
+    │       │   ├── vyzorix.map             # 🗺️ Keeps the library secure by exposing only official JNI symbols
+    │       │   ├── jni_onload.cpp          # 🏁 Initializes environment thread links and pre-binds functions
+    │       │   ├── vyzorix-router.cpp      # 🎛️ The pure performance engine loops feeding PCM data vectors
+    │       │   ├── libaudioclient_proxy.cpp # 🎚️ Proxy hook linking into internal hardware layouts
+    │       │   ├── vyzorix_memory_patcher.cpp # 🎯 Live process scanning and address pointer injection tool
+    │       │   ├── reflection_unhooker.cpp # 🔥 Dynamic native unsealer bypassing API access locks
+    │       │   ├── sentinel_main.cpp       # 👮‍♂️ Dedicated monitor isolating memory pointers against crashes
+    │       │   ├── logger_engine.cpp       # 📊 Superfast lock-free log handler that won't lag sound layers
+    │       │   ├── crash_handler.cpp       # 🪂 Catches critical native faults (SIGSEGV) before a hard exit
+    │       │   ├── ipc_client.cpp          # 🦾 Native mmap data plane layer driving memory streaming loops
+    │       │   ├── include/                # 🗄️ Engine Headers & Context Templates
+    │       │   │   ├── AudioSystem.h       
+    │       │   │   ├── vyzorix_audio_defs.h 
+    │       │   │   ├── audiopolicy_mangled_symbols.h 
+    │       │   │   ├── crash_handler.h     
+    │       │   │   └── reflection_unhooker.h 
+    │       │   └── tests/                  # 🧪 Verification & Sandbox Layers
+    │       │       ├── CMakeLists.txt      
+    │       │       └── memory_patcher_test.cpp # 🧪 Isolated local verification tools for testing memory overrides
+    │       └── kotlin/com/vyzorix/audiorouter/nativeengine/
+    │           └── jni/                    
+    │               ├── NativeAudioProxy.kt # 🗺️ Declares low-latency C++ links directly inside Kotlin code
+    │               └── HiddenApiBypasser.kt # 🔌 Kotlin initialization bridge wiping out system reflection blocks
+    │
+    ├── services/                           # 🤖 THE BRAIN (Background Systems & Hooks)
+    │   ├── build.gradle.kts                # 🏗️ Sets up dependencies for background engine builds
+    │   └── src/main/                       
+    │       ├── AndroidManifest.xml         # ⚙️ Local library manifest (Declares Services/Binds)
+    │       ├── aidl/                       
+    │       │   └── com/vyzorix/audiorouter/services/
+    │       │       └── IAudioEngineManager.aidl # 🤝 Rigid blueprint mapping IPC commands across processes
+    │       ├── assets/routing_profiles/     # 🎛️ Static structural templates defining channel arrays
+    │       ├── res/                        # 🔥 Service resource layer
+    │       │   └── xml/                    
+    │       │       ├── vyzorix_service_config.xml   # Deep accessibility engine structural settings
+    │       │       ├── accessibility_config.xml     # Access filters mapping structural event targets
+    │       │       ├── accessibility_service_config.xml # ⚙️ OS Interception filter configuration
+    │       │       ├── file_paths.xml               # Rules defining shared secure data paths
+    │       │       └── network_security_config.xml  # Configures sandboxed network debugging loopbacks
+    │       └── kotlin/com/vyzorix/audiorouter/services/
+    │           ├── automation/             # 🤖 Screen Automation & Interception Drivers
+    │           │   ├── AccessibilityNodeParser.kt # 🔍 Dynamic tree explorer identifying hidden options
+    │           │   ├── GestureDispatcher.kt       # 👆 Emulates precise screen touches automatically
+    │           │   └── SystemSettingsMacroController.kt # 🔥 The node tree analyzer daemon running macros
+    │           ├── core/                   # 🧠 Persistent Execution Daemons & Management
+    │           │   ├── VyzorixAccessibilityService.kt # Binds directly to the XML parameters
+    │           │   ├── ServiceController.kt      # 🎛️ Manages operational life parameters across active services
+    │           │   ├── VyzorixRouterService.kt   # 🔋 Main engine keeping routing active in the background
+    │           │   ├── KeepAliveForegroundService.kt # 🛡️ Keeps the app alive by locking persistent status priorities
+    │           │   ├── OomScoreAdjusterAnchor.kt # ⚓ Drops the application's out-of-memory crash probability
+    │           │   ├── ServiceLifecycleController.kt # 🏗️ Safely triggers setup and tear-down code states
+    │           │   ├── AudioStateEngine.kt       # 🧠 Oversees deep audio changes to verify routing metrics
+    │           │   ├── PolicyHijackSupervisor.kt # 📡 Intercepts system policy switches to preserve sound loops
+    │           │   ├── PersistenceGuardian.kt    # 🔒 Automated health check restoring dead service threads
+    │           │   ├── JniBridgeDispatcher.kt    # 🔀 Pipes real-time analytics data straight down to the engine
+    │           │   ├── BootLockerOrchestrator.kt # ⚙️ Locks startup tasks into reliable sequential loads
+    │           │   ├── WebLogDispatcher.kt       # 🌐 Streams system diagnostics directly to web-view controllers
+    │           │   ├── CrashSentinel.kt          # 👮‍♂️ Monitors active system stability flags
+    │           │   ├── NativeCrashBridge.kt      # 🪂 Feeds low-level system faults straight to tracking log engines
+    │           │   ├── IsolatedLogPump.kt        # 📊 Pushes tracking sequences outside the primary engine threads
+    │           │   ├── LogcatStreamer.kt         # 📝 Extracts system device metrics for remote tracking
+    │           │   └── LogFileManager.kt         # 💾 Flushes active logs safely to system device memory
+    │           ├── audio/                  # 🎚️ Advanced Hardware Stream Routing Components
+    │           │   ├── AudioRoutingEngine.kt     # 🎛️ Global conductor managing internal stream connections
+    │           │   ├── AudioFocusInterceptor.kt  # 🛑 Overrides application focus requests to block stream pauses
+    │           │   ├── SystemSoundReceiver.kt    # 📡 Catches device media shifts to synchronize routing logic
+    │           │   ├── AudioPlaybackMonitor.kt   # 🔍 Tracks live stream activity across all apps
+    │           │   ├── NotificationStreamRouter.kt # 🎚️ Isolates system alerts without interrupting audio output
+    │           │   ├── StreamStateMatrix.kt      # 🗺️ Keeps the current track/device routing configuration mapped cleanly
+    │           │   ├── HardwareJackDebouncer.kt  # 🔌 Screens audio hardware signals to filter plug glitches
+    │           │   ├── CommunicationRouteProxy.kt # 🔄 Direct management layer hooking deep system dial targets
+    │           │   ├── DynamicVolumeBalancer.kt  # 🎚️ Live audio balance engine leveling stream scales
+    │           │   ├── StreamFocusArbitrator.kt  # 🧠 Decides priority tracks when multiple streams execute at once
+    │           │   ├── VolumeCurveInterceptor.kt # 📊 Normalizes structural stream curves across physical outputs
+    │           │   ├── AudioHalSessionResetter.kt # 🔄 Forces deep audio interface clears to refresh device control
+    │           │   ├── SandboxAudioCaptureEngine.kt # 🔥 The capture hardware loopback system
+    │           │   └── AudioProcessingWorker.kt  # 🧵 Threading queue runner feeding underlying data tasks
+    │           ├── ipc/                    # 🧠 Memory Pipes & Cross-Process Frameworks
+    │           │   ├── EngineConnectionManager.kt # 🤝 Tracks cross-process handshakes and locks bindings
+    │           │   ├── AudioEngineStub.kt        # 🔌 Bridge exposing interface features across active modules
+    │           │   └── SharedAudioBuffer.kt      # 🧠 Kotlin SharedMemory allocator handing memory down to C++
+    │           └── network/                # 🌐 Telemetry Pipelines & Connectivity Drivers
+    │               ├── ApiClient.kt              # 🌐 Handles connection checks and external pipeline requests
+    │               ├── models/                   
+    │               │   └── CommandPayload.kt     # 📄 Formats structured script actions received over endpoints
+    │               ├── LogflareClient.kt         
+    │               ├── LogflarePayload.kt        # 📊 Packs and pushes telemetry straight to remote monitoring logs
+    │               ├── NetworkMonitor.kt         # 📡 Tracks online states to optimize remote telemetry queues
+    │               └── UpdateManager.kt          # ⚙️ Checks configurations to prompt automatic local module updates
+    │           └── receivers/              # 📡 Hardware Interrupt & System Event Receivers
+    │               ├── BootReceiver.kt           # 📡 Boots up engine tasks immediately on device startup
+    │               ├── HwAudioDeviceCallback.kt  # 🎧 Listens for physical headphone jacks or USB attachments
+    │               └── BatteryOptReceiver.kt     # 🔋 Intercepts battery restrictions to maintain runtime focus
+    │
+    └── ui/                                 # 🎨 THE FACE (User Interface Configuration)
+        ├── build.gradle.kts                # 🏗️ Handles interface packaging task parameters
+        └── src/main/                       
+            ├── AndroidManifest.xml         # 🔥 Local library manifest (Declares UI Activities)
+            ├── res/                        # 🎨 Visual Design Vectors & UI Control Mappings
+            │   ├── drawable/ic_vyzorix_service.xml # 🎨 Vectors tracking active system notification graphics
+            │   ├── layout/activity_config.xml # 📱 Structural interface definitions mapping slider elements
+            │   ├── mipmap/ic_launcher.xml    # 🎨 Custom app system icon layouts
+            │   └── values/                 
+            │       ├── strings.xml         
+            │       ├── public.xml          # 🎨 Explicit asset token registry IDs
+            │       └── themes.xml          # 🎨 Visual styling templates and system parameters
+            └── kotlin/com/vyzorix/audiorouter/ui/
+                ├── ConfigActivity.kt       # 🎛️ Main control surface wiring sliders directly to core engines
+                ├── TrampolineActivity.kt   # 🦘 Stealth router launching background services instantly before self-closing
+                └── utils/                  
+                    ├── AudioReflectionHelper.kt # ⚡ Executes reflective method scans to find hidden APIs
+                    ├── CpuWakeLockEngine.kt     # 🔌 Keeps processing chips locked in performance states
+                    ├── LogSpamFilter.kt         # 🧹 Prunes identical output lines to prevent telemetry bloating
+                    ├── FastReflectionCache.kt   # ⚡ Saves method handles in RAM to optimize execution speeds
+                    └── CpuThrottlingWatchdog.kt # 🐕 Monitors processor rates to prevent rendering audio lag
