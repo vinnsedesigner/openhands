@@ -1253,4 +1253,319 @@ This flow begins immediately after `BootstrapCoordinator` finishes permission ch
 
 👇👇👇
 
+# SYSTEM_MAP.md — Complete Architecture Reference
 
+## Document Purpose
+This is the master reference for the VyzorixAudioRouter system. It maps every component's role, lifecycle, dependencies, data flows, and failure boundaries. Use this document to understand how the daemon operates from APK install to steady-state, and how it survives crashes, soft reboots, and system interruptions.
+
+---
+
+## 1. Module Dependency Graph
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         app/ (APK Module)                        │
+│  - VyzorixApplication.kt                                         │
+│  - VyzorixAppInitializer.kt                                      │
+│  - BootstrapActivity.kt, ProjectionPermissionActivity.kt         │
+│  - AppExitDispatcher.kt                                          │
+│  - AndroidManifest.xml (Permissions, Receivers, Providers)       │
+│  - Resources (Layouts, Drawables, XML configs)                   │
+└──────────────────────────────┬──────────────────────────────────┘
+                               │ depends on
+           ┌───────────────────┼───────────────────┐
+           ▼                   ▼                   ▼
+┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐
+│ core/services/   │ │    core/ui/      │ │  core/common/    │
+│ (Orchestration)  │ │ (Trampoline UI)  │ │   (Utilities)    │
+│                  │ │                  │ │                  │
+│ - accessibility/ │ │ - Activities     │ │ - constants/     │
+│ - audio/         │ │ - Layouts        │ │ - enums/         │
+│ - bootstrap/     │ │ - Themes         │ │ - extensions/    │
+│ - capture/       │ │                  │ │ - model/         │
+│ - foreground/    │ └────────┬─────────┘ │ - logging/       │
+│ - diagnostics/   │          │           │ - concurrency/   │
+│ - managers/      │          │           │ - audio/         │
+│ - monitoring/    │          │           │ - device/        │
+│ - playback/      │          │           │ - utils/         │
+│ - updates/       │          │           └────────┬─────────┘
+│ - voip/          │          │                    │
+│ - scheduler/     │          │          ┌─────────┴─────────┐
+│ - resilience/    │          │          ▼                   ▼
+│ - stability/     │          │ ┌──────────────┐ ┌──────────────┐
+│ - state/         │          │ │  core/data/  │ │core/audioengine│
+│ - storage/       │          │ │ (Persistence)│ │  (Native)    │
+│ - testing/       │          │ │              │ │              │
+│ - security/      │          │ │ - database/  │ │ - cpp/       │
+│ - compat/        │          │ │ - dao/       │ │ - include/   │
+│ - provider/      │          │ │ - entity/    │ │ - JNI Bridge │
+│ - receivers/     │          │ │ - converters/│ │ - Pipeline   │
+│ - fallback/      │          │ │ - repository/│ │ - Safety     │
+│ - headless/      │          │ └──────────────┘ └──────────────┘
+│ - ipc/           │          │
+│ - metrics/       │          │
+│ - oem/           │          │
+│ - permissions/   │          │
+└──────────────────┘          │
+```
+
+### Dependency Rules
+1. `core/common` has **zero dependencies** on other modules. It is the foundation.
+2. `core/data` depends only on `core/common` (for models, constants, extensions).
+3. `core/services` depends on `common`, `data`, and `audioengine`. It orchestrates them.
+4. `core/audioengine` depends on `common` for constants and models. It is isolated from Room.
+5. `app` is the **aggregation module** — it declares all dependencies and packs the final APK.
+6. `core/ui` depends on `services` and `common` for permission flows and exit logic.
+7. `core/services/updates` depends on `common/network`, `data/repository`, and `services/foreground` for notification updates.
+
+---
+
+## 2. Complete Startup Sequence (Corrected — Accessibility-First, No Icon Tap)
+
+```
+T+0s    ┌─────────────────────────────────────────────────────┐
+        │  USER ACTION: Install APK via file manager/APK       │
+        │  SYSTEM ACTION: App registers on launcher            │
+        │  IMPORTANT: User NEVER taps launcher icon            │
+        │  (Tapping icon triggers soft reboot on Nokia C22)    │
+        │                                                      │
+        │  USER ACTION: Opens Settings -> Accessibility        │
+        │  - Sees "VyzorixAudioRouter" in the services list    │
+        │  - Taps it -> sees two toggles:                      │
+        │    1. "Enable VyzorixAudioRouter" (top)              │
+        │    2. "Create overlay shortcut" (bottom)             │
+        │  USER: Taps "Enable" -> Grants Accessibility         │
+        └──────────────────────────┬──────────────────────────┘
+                                   │
+                                   ▼
+T+1s    ┌─────────────────────────────────────────────────────┐
+        │  SYSTEM ACTION: RouterAccessibilityService bound     │
+        │  - onServiceConnected() fires                        │
+        │  - AccessibilityStateTracker.markEnabled()           │
+        │  - LauncherIconHider.nukeLauncherIcon()              │
+        │    - Calls PackageManager.setComponentEnabledSetting │
+        │    - Disables BootstrapActivity permanently          │
+        │    - Launcher icon disappears from user's view       │
+        │  - AppInfoConfig.hideOpenButton()                    │
+        │    - Removes CATEGORY_LAUNCHER intent filter         │
+        │    - Settings -> Apps now shows only:                │
+        │      [Uninstall] [Disable] (no "Open" button)       │
+        │  - Triggers VyzorixAppInitializer.execute()          │
+        └──────────────────────────┬──────────────────────────┘
+                                   │
+                                   ▼
+T+2s    ┌─────────────────────────────────────────────────────┐
+        │  INITIALIZATION: VyzorixAppInitializer               │
+        │  1. NotificationChannelManager.createChannels()      │
+        │     - Creates "daemon_primary" (IMPORTANCE_LOW)      │
+        │     - Creates "diagnostics" (IMPORTANCE_MIN)         │
+        │     - Creates "updates" (IMPORTANCE_DEFAULT)         │
+        │  2. DaemonDatabase.getInstance() + Migrations        │
+        │  3. KeystoreManager.initialize()                     │
+        │  4. AppConfig.load()                                 │
+        │  5. PermissionAutoGranter.requestAll()               │
+        │     - POST_NOTIFICATIONS (auto-granted on enable)    │
+        │     - SYSTEM_ALERT_WINDOW (overlay, if user enabled) │
+        │     - REQUEST_INSTALL_PACKAGES (for future updates)  │
+        │     - Verifies manifest-granted:                     │
+        │       MODIFY_AUDIO_SETTINGS, RECEIVE_BOOT_COMPLETED, │
+        │       FOREGROUND_SERVICE, INTERNET, ACCESS_NETWORK   │
+        └──────────────────────────┬──────────────────────────┘
+                                   │
+                                   ▼
+T+3s    ┌─────────────────────────────────────────────────────┐
+        │  BOOTSTRAP: TrampolineService starts                 │
+        │  - BootstrapCoordinator.begin()                      │
+        │  - PermissionStateMachine.initState(ACCESS_GRANTED)  │
+        │  - Checks: MediaProjection token cached?             │
+        │    - YES: Jump to T+6s                               │
+        │    - NO: Proceed to T+4s                             │
+        └──────────────────────────┬──────────────────────────┘
+                                   │
+                                   ▼
+T+4s    ┌─────────────────────────────────────────────────────┐
+        │  PERMISSION GRANT (if first time, no cached token)   │
+        │  - ProjectionPermissionActivity.launch()             │
+        │  - User taps "Start Now" on system dialog            │
+        │  - Token passed to ProjectionTokenManager            │
+        │  - Activity.finish() immediately                     │
+        │  - PermissionStateMachine.update(MEDIA_PROJECTION)   │
+        │  - AppExitDispatcher.teardownAll()                   │
+        └──────────────────────────┬──────────────────────────┘
+                                   │
+                                   ▼
+T+5s    ┌─────────────────────────────────────────────────────┐
+        │  OVERLAY SHORTCUT (if user enabled it)               │
+        │  - OverlayShortcutController.create()                │
+        │  - Draws TYPE_APPLICATION_OVERLAY window             │
+        │  - Contains enable/disable toggle button             │
+        │  - Responds to tap by toggling Accessibility service │
+        │  - Uses SYSTEM_ALERT_WINDOW permission               │
+        └──────────────────────────┬──────────────────────────┘
+                                   │
+                                   ▼
+T+6s    ┌─────────────────────────────────────────────────────┐
+        │  DAEMON LAUNCH: HeadlessBootSequence.execute()       │
+        │  - PersistentAudioService.startForeground()          │
+        │  - ServiceNotificationDashboard.postInitial()        │
+        │  - DaemonLifecycleManager.startAll()                 │
+        │    Order matters (see Section 7: Lifecycle Graph)    │
+        └──────────────────────────┬──────────────────────────┘
+                                   │
+                                   ▼
+T+7s    ┌─────────────────────────────────────────────────────┐
+        │  AUDIO ENGINE: Route War Begins                      │
+        │  1. AudioRouteWatcher.queryDevices()                 │
+        │     - Result: DEVICE_OUT_WIRED_HEADSET active        │
+        │  2. SpeakerForceEngine.startLoop()                   │
+        │     - Sets AudioManager.mode = MODE_IN_COMMUNICATION │
+        │     - Sets AudioManager.isSpeakerphoneOn = true      │
+        │  3. NokiaC22DeviceProfile.apply()                    │
+        │     - Enables aggressive force mode (500ms checks)   │
+        │  4. AudioFocusHandler.register()                     │
+        │     - Listens for focus changes/interruptions        │
+        └──────────────────────────┬──────────────────────────┘
+                                   │
+                                   ▼
+T+8s    ┌─────────────────────────────────────────────────────┐
+        │  CAPTURE PIPELINE: MediaProjection Active            │
+        │  1. MediaProjectionCaptureSession.open()             │
+        │     - Creates AudioRecord with projection token      │
+        │  2. PlaybackCaptureEngine.start()                    │
+        │     - Begins reading bytes into AudioBufferPool      │
+        │  3. NativeLoader.loadLibrary()                       │
+        │     - Safe wrapper catches UnsatisfiedLinkError      │
+        │     - Creates lock-free ring buffer in C++           │
+        │  4. AudioPipelineController.start()                  │
+        │     - Connects Java buffer -> JNI -> C++ ring buffer │
+        └──────────────────────────┬──────────────────────────┘
+                                   │
+                                   ▼
+T+9s    ┌─────────────────────────────────────────────────────┐
+        │  MONITORING SYSTEMS: All Observers Active            │
+        │  1. AppLaunchObserver.register() (UsageStatsManager) │
+        │  2. WindowTransitionTracker.register() (Accessibility│
+        │  3. PackageStateObserver.loadFirstRunList()          │
+        │  4. SoftRebootPredictor.startUptimeMonitoring()      │
+        │  5. RendererFailureDetector.startStasisWatch()       │
+        │  6. DeviceThermalMonitor.startPolling()              │
+        │  7. ProcessHealthMonitor.startHeartbeat()            │
+        │  8. NetworkStateMonitor.register() (for updates)     │
+        └──────────────────────────┬──────────────────────────┘
+                                   │
+                                   ▼
+T+10s   ┌─────────────────────────────────────────────────────┐
+        │  WATCHDOG & STABILITY: Safety Nets Active            │
+        │  1. DaemonWatchdog.start()                           │
+        │     - Pings every 5s                                 │
+        │  2. PipelineHealthChecker.monitor()                  │
+        │     - Verifies capture/playback threads running      │
+        │  3. CrashLoopProtector.enable()                      │
+        │     - Tracks restart count (resets after 10min)      │
+        │  4. LastKnownStateDumper.start()                     │
+        │     - Writes heartbeat every 10s                     │
+        │  5. UpdateChecker.schedule()                         │
+        │     - First check in 6 hours (configurable)          │
+        └──────────────────────────┬──────────────────────────┘
+                                   │
+                                   ▼
+T+11s   ┌─────────────────────────────────────────────────────┐
+        │  DASHBOARD: First Full Update                        │
+        │  ServiceNotificationDashboard.postUpdate()           │
+        │  - Tier 1: Route Status -> SPEAKER FORCED [OK]       │
+        │  - Tier 2: Capture -> ACTIVE (48kHz, 0 underruns)   │
+        │  - Tier 3: Health -> Risk Score 0/100, Uptime 11s    │
+        │  - Notification visible in shade (expandable)        │
+        └──────────────────────────┬──────────────────────────┘
+                                   │
+                                   ▼
+T+12s+  ┌─────────────────────────────────────────────────────┐
+        │  STEADY STATE: System Fully Operational              │
+        │  - Audio flows: Capture -> Process -> Speaker        │
+        │  - Dashboard updates every 10s                       │
+        │  - Watchdog pings every 5s                           │
+        │  - SpeakerForce corrections every 500ms              │
+        │  - Observers monitor silently                        │
+        │  - NetworkStateMonitor checks for internet           │
+        │  - UpdateChecker polls on schedule (every 6 hours)   │
+        │  - Launcher icon: HIDDEN (permanently)               │
+        │  - Overlay shortcut: VISIBLE (if user enabled)       │
+        │  - App Info: [Uninstall] [Disable] only              │
+        └─────────────────────────────────────────────────────┘
+```
+
+---
+
+## 3. Service Interaction Matrix
+
+### Core Service Dependencies
+
+| Caller | Callee | Trigger | Purpose | Critical? |
+|--------|--------|---------|---------|-----------|
+| **RouterAccessibilityService** | AccessibilityEventRouter | onAccessibilityEvent() | Dispatches events to subsystems | YES |
+| **RouterAccessibilityService** | LauncherIconHider | First accessibility grant | Disables launcher icon permanently | YES |
+| **RouterAccessibilityService** | VyzorixAppInitializer | onServiceConnected() | Initializes all components | YES |
+| **RouterAccessibilityService** | UiRecoveryDaemon | Service crash detected | Reopens permission screens | YES |
+| **RouterAccessibilityService** | BootStateRestorer | Reboot detected after grant | Resumes from last known state | YES |
+| **AccessibilityEventRouter** | PermissionScreenWatcher | TYPE_WINDOW_STATE_CHANGED | Detects system dialogs | YES |
+| **AccessibilityEventRouter** | AppLaunchObserver | TYPE_WINDOWS_CHANGED | Tracks app launches | NO |
+| **AccessibilityEventRouter** | WindowTransitionTracker | TYPE_WINDOW_CONTENT_CHANGED | Monitors UI transitions | NO |
+| **AccessibilityEventRouter** | OverlayShortcutController | User enables overlay | Creates floating toggle | NO |
+
+| Caller | Callee | Trigger | Purpose | Critical? |
+|--------|--------|---------|---------|-----------|
+| **PersistentAudioService** | DaemonLifecycleManager | onCreate() | Coordinates all subsystem startup | YES |
+| **PersistentAudioService** | ServiceNotificationDashboard | Every 10s | Updates notification content | YES |
+| **PersistentAudioService** | AudioFocusHandler | onAudioFocusChange() | Manages focus loss/gain | YES |
+| **PersistentAudioService** | NetworkStateMonitor | onCreate() | Begins internet connectivity checks | NO |
+| **PersistentAudioService** | UpdateChecker | Network connected + schedule | Polls server for updates | NO |
+| **DaemonLifecycleManager** | SpeakerForceEngine | start() | Begins route enforcement loop | YES |
+| **DaemonLifecycleManager** | MediaProjectionCaptureSession | start() | Opens audio capture | YES |
+| **DaemonLifecycleManager** | AppLaunchObserver | start() | Begins launch monitoring | NO |
+| **DaemonLifecycleManager** | DaemonWatchdog | start() | Begins health checks | YES |
+
+| Caller | Callee | Trigger | Purpose | Critical? |
+|--------|--------|---------|---------|-----------|
+| **SpeakerForceEngine** | AudioRouteWatcher | Every 500ms | Checks current route state | YES |
+| **SpeakerForceEngine** | NokiaC22DeviceProfile | On route mismatch | Applies device-specific workarounds | YES |
+| **SpeakerForceEngine** | WatchdogEscalationPolicy | 3 failed corrections | Escalates recovery stage | YES |
+| **AudioRouteWatcher** | AudioRouteManager | Route change detected | Updates centralized route state | YES |
+| **AudioRouteManager** | SpeakerForceManager | Route authority change | Reasserts routing truth | YES |
+
+| Caller | Callee | Trigger | Purpose | Critical? |
+|--------|--------|---------|---------|-----------|
+| **MediaProjectionCaptureSession** | PlaybackCaptureEngine | Token granted | Opens AudioRecord | YES |
+| **PlaybackCaptureEngine** | NativeAudioBridge | Buffer high water mark | Transfers PCM to C++ | YES |
+| **NativeAudioBridge** | AudioPipelineController | JNI callback | Coordinates native pipeline | YES |
+| **AudioPipelineController** | SpeakerPlaybackEngine | PCM ready | Writes to AudioTrack | YES |
+| **SpeakerPlaybackEngine** | AudioTrackFactory | Track needed | Creates optimized AudioTrack | YES |
+| **SpeakerPlaybackEngine** | LatencyOptimizer | Underrun detected | Tunes playback buffers | NO |
+
+| Caller | Callee | Trigger | Purpose | Critical? |
+|--------|--------|---------|---------|-----------|
+| **UpdateChecker** | NetworkStateMonitor | Internet available | Checks connectivity before polling | NO |
+| **UpdateChecker** | UpdateConfig | On schedule | Gets server URL and endpoints | NO |
+| **UpdateChecker** | UpdateNotificationHandler | Update available | Shows "Update ready" notification | NO |
+| **UpdateNotificationHandler** | UpdateDownloader | User taps "Download" | Starts foreground download | YES |
+| **UpdateDownloader** | UpdateDownloadService | Download triggered | Uses dataSync foreground service | YES |
+| **UpdateDownloader** | UpdateConfig | During download | Gets checksum, download URL | YES |
+| **UpdateDownloader** | UpdateStateStore | Download complete | Persists download state | NO |
+| **UpdateInstaller** | FileProvider | APK downloaded | Creates content:// URI | YES |
+| **UpdateInstaller** | PermissionAutoGranter | Before install | Checks REQUEST_INSTALL_PACKAGES | YES |
+
+| Caller | Callee | Trigger | Purpose | Critical? |
+|--------|--------|---------|---------|-----------|
+| **LogFileRotator** | RollingLogWriter | File size > 2MB | Rotates to new file | NO |
+| **LogFileRotator** | RuntimeSessionIndexer | New session created | Updates index metadata | NO |
+| **CrashSnapshotExporter** | FileProvider | User requests export | Creates shareable URI | NO |
+| **CrashSnapshotExporter** | IntentUtils | Export triggered | Fires ACTION_SEND intent | NO |
+
+| Caller | Callee | Trigger | Purpose | Critical? |
+|--------|--------|---------|---------|-----------|
+| **GlobalExceptionHandler** | LastKnownStateDumper | Uncaught exception | Dumps current state | YES |
+| **GlobalExceptionHandler** | LogStreamCollector | Exception caught | Logs crash context | YES |
+| **NativeCrashMarker** | Logger | Signal 11 detected | Flags native failure | YES |
+| **SoftRebootTracker** | StateRepository | Reboot detected | Persists reboot history | NO |
+| **DaemonWatchdog** | ServiceRecoveryManager | Ping timeout | Attempts service restart | YES |
+| **ServiceRecoveryManager** | CrashLoopProtector | Restart triggered | Checks if in crash loop | YES |
+| **CrashLoopProtector** | StartupBackoffScheduler | L
